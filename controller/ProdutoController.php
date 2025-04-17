@@ -3,18 +3,20 @@
 namespace CasasLuiza\controller;
 
 use CasasLuiza\service\ProdutoService;
+use CasasLuiza\template\ProdutoTemplate;
 
 class ProdutoController {
     private $produtoService;
+    private $template;
 
     public function __construct() {
         $this->produtoService = new ProdutoService();
+        $this->template = new ProdutoTemplate();
     }
 
     public function listar() {
         $produtos = $this->produtoService->listarProdutos();
-        // TODO: implementar template para exibir a lista de produtos
-        return;
+        $this->template->layout('/produto/listar.php', $produtos);
     }
 
     public function novo() {
@@ -24,12 +26,11 @@ class ProdutoController {
             $imagem = $_POST['imagem'] ?? '';
             
             $this->produtoService->inserirProduto($descricao, $preco, $imagem);
-            header('Location: index.php?rota=produto/lista');
+            header('Location: index.php?rota=produto/listar');
             exit;
         }
         
-        // TODO: implementar template para o formulário de novo produto
-        return;
+        $this->template->layout('/produto/formulario.php');
     }
 
     public function editar() {
@@ -41,13 +42,12 @@ class ProdutoController {
             $imagem = $_POST['imagem'] ?? '';
             
             $this->produtoService->alterarProduto($id, $descricao, $preco, $imagem);
-            header('Location: index.php?rota=produto/lista');
+            header('Location: index.php?rota=produto/listar');
             exit;
         }
         
         $produto = $this->produtoService->obterProdutoPorId($id);
-        // TODO: implementar template para o formulário de edição
-        return;
+        $this->template->layout('/produto/formulario.php', $produto);
     }
 
     public function excluir() {
@@ -57,7 +57,7 @@ class ProdutoController {
             $this->produtoService->excluirProduto($id);
         }
         
-        header('Location: index.php?rota=produto/lista');
+        header('Location: index.php?rota=produto/listar');
         exit;
     }
 }

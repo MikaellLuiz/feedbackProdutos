@@ -1,9 +1,12 @@
 <?php
-include "generic/Autoload.php";
+include "generic/Autoloader.php";
 
 use CasasLuiza\generic\Controller;
+use CasasLuiza\generic\DotEnv;
 
-if (isset($_GET["param"])) {
-    $controller = new Controller();
-    $controller->verificarChamadas($_GET["param"]);
-}
+// Carrega as variáveis de ambiente
+(new DotEnv(__DIR__ . '/.env'))->load();
+
+$rota = isset($_GET["rota"]) ? $_GET["rota"] : "";
+$controller = new Controller();
+$controller->verificarChamadas($rota);

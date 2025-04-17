@@ -3,18 +3,20 @@
 namespace CasasLuiza\controller;
 
 use CasasLuiza\service\UsuarioService;
+use CasasLuiza\template\UsuarioTemplate;
 
 class UsuarioController {
     private $usuarioService;
+    private $template;
 
     public function __construct() {
         $this->usuarioService = new UsuarioService();
+        $this->template = new UsuarioTemplate();
     }
 
     public function listar() {
         $usuarios = $this->usuarioService->listarUsuarios();
-        // TODO: implementar template para exibir a lista de usuários
-        return;
+        $this->template->layout('/usuario/listar.php', $usuarios);
     }
 
     public function novo() {
@@ -25,12 +27,11 @@ class UsuarioController {
             $admin = isset($_POST['admin']) ? true : false;
             
             $this->usuarioService->inserirUsuario($nome, $email, $senha, $admin);
-            header('Location: index.php?rota=usuario/lista');
+            header('Location: index.php?rota=usuario/listar');
             exit;
         }
         
-        // TODO: implementar template para o formulário de novo usuário
-        return;
+        $this->template->layout('/usuario/formulario.php');
     }
 
     public function editar() {
@@ -43,13 +44,12 @@ class UsuarioController {
             $admin = isset($_POST['admin']) ? true : false;
             
             $this->usuarioService->alterarUsuario($id, $nome, $email, $senha, $admin);
-            header('Location: index.php?rota=usuario/lista');
+            header('Location: index.php?rota=usuario/listar');
             exit;
         }
         
         $usuario = $this->usuarioService->obterUsuarioPorId($id);
-        // TODO: implementar template para o formulário de edição
-        return;
+        $this->template->layout('/usuario/formulario.php', $usuario);
     }
 
     public function excluir() {
@@ -59,7 +59,7 @@ class UsuarioController {
             $this->usuarioService->excluirUsuario($id);
         }
         
-        header('Location: index.php?rota=usuario/lista');
+        header('Location: index.php?rota=usuario/listar');
         exit;
     }
 }
