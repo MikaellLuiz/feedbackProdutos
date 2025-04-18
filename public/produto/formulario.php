@@ -1,6 +1,6 @@
 <h2><?= ($parametro != null) ? 'Editar Produto' : 'Novo Produto' ?></h2>
 
-<form method="POST" action="index.php?rota=<?= ($parametro != null) ? 'produto/editar?id=' . $parametro[0]['id'] : 'produto/novo' ?>">
+<form method="POST" action="<?= ($parametro != null) ? '/produto/editar?id=' . $parametro[0]['id'] : '/produto/novo' ?>">
     <div style="margin-bottom: 15px;">
         <label style="display: block; margin-bottom: 5px;">Descrição:</label>
         <textarea name="descricao" style="width: 100%; padding: 8px; box-sizing: border-box; height: 100px;" required><?= ($parametro != null) ? $parametro[0]['descricao'] : '' ?></textarea>
@@ -24,6 +24,6 @@
         <button type="submit" style="padding: 10px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">
             <?= ($parametro != null) ? 'Atualizar' : 'Cadastrar' ?>
         </button>
-        <a href="index.php?rota=produto/lista" style="margin-left: 10px; text-decoration: none; color: #333;">Cancelar</a>
+        <a href="/produto/listar" style="margin-left: 10px; text-decoration: none; color: #333;">Cancelar</a>
     </div>
 </form>

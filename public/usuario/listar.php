@@ -1,7 +1,7 @@
 <h2>Usuários Cadastrados</h2>
 
 <div style="margin-bottom: 20px;">
-    <a href="index.php?rota=usuario/novo" style="padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">Novo Usuário</a>
+    <a href="/usuario/novo" style="padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">Novo Usuário</a>
 </div>
 
 <table style="width: 100%; border-collapse: collapse;">
@@ -29,8 +29,8 @@
                         <?= ($usuario['admin'] == 1) ? 'Sim' : 'Não' ?>
                     </td>
                     <td style="padding: 10px; text-align: center; border: 1px solid #ddd;">
-                        <a href="index.php?rota=usuario/editar&id=<?= $usuario['id'] ?>" style="margin-right: 10px; color: #2196F3; text-decoration: none;">Editar</a>
-                        <a href="index.php?rota=usuario/excluir&id=<?= $usuario['id'] ?>" style="color: #F44336; text-decoration: none;" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">Excluir</a>
+                        <a href="/usuario/editar?id=<?= $usuario['id'] ?>" style="margin-right: 10px; color: #2196F3; text-decoration: none;">Editar</a>
+                        <a href="/usuario/excluir?id=<?= $usuario['id'] ?>" style="color: #F44336; text-decoration: none;" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">Excluir</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

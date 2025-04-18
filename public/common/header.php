@@ -150,15 +150,15 @@
     <div class="header">
         <div class="header-container">
             <div class="logo-container">
-                <img src="/feedbackProdutos/public/img/logo.png" alt="Casas Luiza" class="logo">
+                <img src="/public/img/logo.png" alt="Casas Luiza" class="logo">
             </div>
         </div>
     </div>
     <div class="navbar">
         <div class="navbar-container">
-            <a href="index.php?rota=usuario/listar">Usuários</a>
-            <a href="index.php?rota=produto/listar">Produtos</a>
-            <a href="index.php?rota=feedback/listar">Feedbacks</a>
+            <a href="/usuario/listar">Usuários</a>
+            <a href="/produto/listar">Produtos</a>
+            <a href="/feedback/listar">Feedbacks</a>
         </div>
     </div>
     <div class="container">

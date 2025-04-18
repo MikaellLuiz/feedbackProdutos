@@ -1,7 +1,7 @@
 <h2>Feedbacks Cadastrados</h2>
 
 <div style="margin-bottom: 20px;">
-    <a href="index.php?rota=feedback/novo" style="padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">Novo Feedback</a>
+    <a href="/feedback/novo" style="padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">Novo Feedback</a>
 </div>
 
 <?php if(empty($parametro)): ?>
@@ -25,8 +25,8 @@
             <p style="margin: 10px 0; line-height: 1.5;"><?= $feedback['comentario'] ?></p>
             
             <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-                <a href="index.php?rota=feedback/editar&id=<?= $feedback['id'] ?>" style="padding: 5px 10px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 3px;">Editar</a>
-                <a href="index.php?rota=feedback/excluir&id=<?= $feedback['id'] ?>" style="padding: 5px 10px; background-color: #F44336; color: white; text-decoration: none; border-radius: 3px;" onclick="return confirm('Tem certeza que deseja excluir este feedback?')">Excluir</a>
+                <a href="/feedback/editar?id=<?= $feedback['id'] ?>" style="padding: 5px 10px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 3px;">Editar</a>
+                <a href="/feedback/excluir?id=<?= $feedback['id'] ?>" style="padding: 5px 10px; background-color: #F44336; color: white; text-decoration: none; border-radius: 3px;" onclick="return confirm('Tem certeza que deseja excluir este feedback?')">Excluir</a>
             </div>
         </div>
     <?php endforeach; ?>

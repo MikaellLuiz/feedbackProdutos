@@ -1,7 +1,7 @@
 <h2>Produtos Cadastrados</h2>
 
 <div style="margin-bottom: 20px;">
-    <a href="index.php?rota=produto/novo" style="padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">Novo Produto</a>
+    <a href="/produto/novo" style="padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">Novo Produto</a>
 </div>
 
 <div class="products-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
@@ -22,8 +22,8 @@
                 <p style="margin: 0 0 15px 0; font-weight: bold; color: #e44d26;">R$ <?= number_format($produto['preco'], 2, ',', '.') ?></p>
                 
                 <div style="display: flex; justify-content: space-between;">
-                    <a href="index.php?rota=produto/editar&id=<?= $produto['id'] ?>" style="padding: 5px 10px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 3px;">Editar</a>
-                    <a href="index.php?rota=produto/excluir&id=<?= $produto['id'] ?>" style="padding: 5px 10px; background-color: #F44336; color: white; text-decoration: none; border-radius: 3px;" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
+                    <a href="/produto/editar?id=<?= $produto['id'] ?>" style="padding: 5px 10px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 3px;">Editar</a>
+                    <a href="/produto/excluir?id=<?= $produto['id'] ?>" style="padding: 5px 10px; background-color: #F44336; color: white; text-decoration: none; border-radius: 3px;" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
                 </div>
             </div>
         <?php endforeach; ?>

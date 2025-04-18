@@ -1,6 +1,6 @@
 <h2><?= ($parametro != null) ? 'Editar Feedback' : 'Novo Feedback' ?></h2>
 
-<form method="POST" action="index.php?rota=<?= ($parametro != null) ? 'feedback/editar?id=' . $parametro[0]['id'] : 'feedback/novo' ?>">
+<form method="POST" action="<?= ($parametro != null) ? '/feedback/editar?id=' . $parametro[0]['id'] : '/feedback/novo' ?>">
     <div style="margin-bottom: 15px;">
         <label style="display: block; margin-bottom: 5px;">Produto:</label>
         <select name="produto_id" style="width: 100%; padding: 8px; box-sizing: border-box;" required>
@@ -50,6 +50,6 @@
         <button type="submit" style="padding: 10px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">
             <?= ($parametro != null) ? 'Atualizar' : 'Cadastrar' ?>
         </button>
-        <a href="index.php?rota=feedback/lista" style="margin-left: 10px; text-decoration: none; color: #333;">Cancelar</a>
+        <a href="/feedback/listar" style="margin-left: 10px; text-decoration: none; color: #333;">Cancelar</a>
     </div>
 </form>
