@@ -21,8 +21,35 @@ class FeedbackController {
     }
 
     public function listar() {
+        // Obter todos os feedbacks
         $feedbacks = $this->feedbackService->listarFeedbacks();
-        $this->template->layout('/feedback/listar.php', $feedbacks);
+        
+        // Obter todos os produtos com suas informações
+        $produtos = $this->produtoService->listarProdutos();
+        
+        // Agrupar feedbacks por produto
+        $feedbacksPorProduto = [];
+        
+        foreach ($produtos as $produto) {
+            $feedbacksPorProduto[$produto['id']] = [
+                'produto' => $produto,
+                'feedbacks' => []
+            ];
+        }
+        
+        foreach ($feedbacks as $feedback) {
+            if (isset($feedbacksPorProduto[$feedback['produto_id']])) {
+                $feedbacksPorProduto[$feedback['produto_id']]['feedbacks'][] = $feedback;
+            }
+        }
+        
+        // Filtrar apenas produtos que têm feedbacks
+        $feedbacksPorProduto = array_filter($feedbacksPorProduto, function($item) {
+            return !empty($item['feedbacks']);
+        });
+        
+        // Enviar os dados para o template
+        $this->template->layout('/feedback/listar.php', $feedbacksPorProduto);
     }
 
     public function novo() {
