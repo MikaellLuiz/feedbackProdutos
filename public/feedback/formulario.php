@@ -6,7 +6,7 @@
         <select name="produto_id" style="width: 100%; padding: 8px; box-sizing: border-box;" required>
             <option value="">Selecione um produto</option>
             <?php foreach($produtos as $produto): ?>
-                <option value="<?= $produto['id'] ?>" <?= ($parametro != null && $parametro[0]['produto_id'] == $produto['id']) ? 'selected' : '' ?>>
+                <option value="<?= $produto['id'] ?>" <?= ($parametro != null && $parametro[0]['produto_id'] == $produto['id']) || (isset($produtoSelecionado) && $produtoSelecionado == $produto['id']) ? 'selected' : '' ?>>
                     <?= substr($produto['descricao'], 0, 50) ?><?= (strlen($produto['descricao']) > 50) ? '...' : '' ?> - R$ <?= number_format($produto['preco'], 2, ',', '.') ?>
                 </option>
             <?php endforeach; ?>
@@ -50,6 +50,6 @@
         <button type="submit" style="padding: 10px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">
             <?= ($parametro != null) ? 'Atualizar' : 'Cadastrar' ?>
         </button>
-        <a href="/feedback/listar" style="margin-left: 10px; text-decoration: none; color: #333;">Cancelar</a>
+        <a href="<?= isset($produtoSelecionado) && $produtoSelecionado > 0 ? '/produto/detalhes?id=' . $produtoSelecionado : '/feedback/listar' ?>" style="margin-left: 10px; text-decoration: none; color: #333;">Cancelar</a>
     </div>
 </form>

@@ -33,14 +33,22 @@ class FeedbackController {
             $comentario = $_POST['comentario'] ?? '';
             
             $this->feedbackService->inserirFeedback($produto_id, $usuario_id, $nota, $comentario);
-            header('Location: index.php?rota=feedback/listar');
+            
+            // Redireciona para os detalhes do produto após adicionar o feedback
+            header('Location: /produto/detalhes?id=' . $produto_id);
             exit;
         }
         
         // Preparamos os dados aqui
-        global $produtos, $usuarios;
+        global $produtos, $usuarios, $produtoSelecionado;
         $produtos = $this->produtoService->listarProdutos();
         $usuarios = $this->usuarioService->listarUsuarios();
+        
+        // Verifica se foi passado um ID de produto pela URL
+        $produtoSelecionado = 0;
+        if (isset($_GET['produto_id'])) {
+            $produtoSelecionado = intval($_GET['produto_id']);
+        }
         
         // Usamos o método layout do template
         $this->template->layout('/feedback/formulario.php');

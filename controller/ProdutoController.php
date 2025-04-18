@@ -3,14 +3,17 @@
 namespace CasasLuiza\controller;
 
 use CasasLuiza\service\ProdutoService;
+use CasasLuiza\service\FeedbackService;
 use CasasLuiza\template\ProdutoTemplate;
 
 class ProdutoController {
     private $produtoService;
+    private $feedbackService;
     private $template;
 
     public function __construct() {
         $this->produtoService = new ProdutoService();
+        $this->feedbackService = new FeedbackService();
         $this->template = new ProdutoTemplate();
     }
 
@@ -70,6 +73,51 @@ class ProdutoController {
         
         header('Location: /produto/listar');
         exit;
+    }
+    
+    /**
+     * Exibe os detalhes de um produto específico com suas avaliações
+     */
+    public function detalhes() {
+        $id = $_GET['id'] ?? 0;
+        
+        if ($id <= 0) {
+            header('Location: /produto/listar');
+            exit;
+        }
+        
+        // Obtém os detalhes do produto
+        $produto = $this->produtoService->obterProdutoPorId($id);
+        
+        if (empty($produto)) {
+            header('Location: /produto/listar');
+            exit;
+        }
+        
+        // Obtém os feedbacks do produto
+        $feedbacks = $this->produtoService->obterFeedbacksDoProduto($id);
+        
+        // Calcula a nota média
+        $notaMedia = 0;
+        $totalAvaliacoes = count($feedbacks);
+        
+        if ($totalAvaliacoes > 0) {
+            $somaNotas = 0;
+            foreach ($feedbacks as $feedback) {
+                $somaNotas += $feedback['nota'];
+            }
+            $notaMedia = $somaNotas / $totalAvaliacoes;
+        }
+        
+        // Passa os dados para a view
+        $dados = [
+            'produto' => $produto[0],
+            'feedbacks' => $feedbacks,
+            'nota_media' => $notaMedia,
+            'total_avaliacoes' => $totalAvaliacoes
+        ];
+        
+        $this->template->layout('/produto/detalhes.php', $dados);
     }
     
     /**

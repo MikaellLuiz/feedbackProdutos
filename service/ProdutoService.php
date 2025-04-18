@@ -23,4 +23,14 @@ class ProdutoService extends ProdutoDAO {
     public function excluirProduto(int $id) {
         return parent::excluir($id);
     }
+    
+    /**
+     * Obtém todas as avaliações (feedbacks) para um produto específico
+     *
+     * @param int $produtoId ID do produto
+     * @return array Lista de feedbacks do produto
+     */
+    public function obterFeedbacksDoProduto(int $produtoId) {
+        return parent::obterFeedbacksDoProduto($produtoId);
+    }
 }

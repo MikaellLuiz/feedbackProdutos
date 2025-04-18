@@ -28,6 +28,7 @@ class Controller{
             "produto/novo" => new Acao("ProdutoController", "novo"),
             "produto/editar" => new Acao("ProdutoController", "editar"),
             "produto/excluir" => new Acao("ProdutoController", "excluir"),
+            "produto/detalhes" => new Acao("ProdutoController", "detalhes"),
             
             // Rotas para Feedback
             "feedback/listar" => new Acao("FeedbackController", "listar"),
