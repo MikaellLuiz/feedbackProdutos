@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Feedback de Produtos - Casas Luiza</title>
     <link rel="stylesheet" href="/public/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <?php
@@ -26,9 +27,15 @@
             </div>
             <div class="user-info">
                 <?php if ($logado): ?>
-                    <span>Olá, <?= $nomeUsuario ?></span>
+                    <span><?= $nomeUsuario ?></span>
+                    <div class="user-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
                     <a href="/usuario/logout" class="logout-link">Sair</a>
                 <?php else: ?>
+                    <div class="user-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
                     <a href="/usuario/login" class="login-link">Entrar</a>
                 <?php endif; ?>
             </div>

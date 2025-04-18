@@ -1,29 +1,45 @@
-<h2>Produtos Cadastrados</h2>
+<div class="container-titulo">
+    <h1 class="produtos-titulo">Produtos</h1>
 
-<div style="margin-bottom: 20px;">
-    <a href="/produto/novo" style="padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">Novo Produto</a>
+    <div class="nova-produto-container">
+        <a href="/produto/novo" class="btn-novo-produto">Novo Produto</a>
+    </div>
 </div>
 
-<div class="products-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+<div class="produtos-grid">
     <?php if(empty($parametro)): ?>
-        <p style="grid-column: 1 / -1; text-align: center; padding: 20px;">Nenhum produto cadastrado</p>
+        <p class="no-products">Nenhum produto cadastrado</p>
     <?php else: ?>
         <?php foreach($parametro as $produto): ?>
-            <div class="product-card">
-                <?php if(!empty($produto['imagem'])): ?>
-                    <img src="/public<?= $produto['imagem'] ?>" alt="<?= substr($produto['descricao'], 0, 30) ?>..." class="product-img" style="max-width: 100%; height: auto; margin-bottom: 10px;">
-                <?php else: ?>
-                    <div style="height: 100px; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
-                        <span style="color: #999;">Sem imagem</span>
+            <div class="produto-card">
+                <div class="produto-imagem-container">
+                    <?php if(!empty($produto['imagem'])): ?>
+                        <img src="<?= $produto['imagem'] ?>" alt="<?= $produto['nome'] ?>" class="produto-imagem">
+                    <?php else: ?>
+                        <div class="produto-sem-imagem">
+                            <span>Sem imagem</span>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="produto-info">
+                    <h3 class="produto-descricao"><?= substr($produto['descricao'], 0, 50) ?><?= (strlen($produto['descricao']) > 50) ? '...' : '' ?></h3>
+                    
+                    <div class="produto-precos">
+                        <div class="produto-preco-original">
+                            <span>R$ <?= number_format($produto['preco'] * 1.1, 2, ',', '.') ?></span>
+                        </div>
+                        <div class="produto-preco-atual">
+                            <span class="preco-prefixo">ou</span>
+                            <span class="preco-valor">R$ <?= number_format($produto['preco'], 2, ',', '.') ?></span>
+                            <span class="preco-sufixo">no Pix</span>
+                        </div>
                     </div>
-                <?php endif; ?>
-                
-                <h3 style="margin: 0 0 10px 0;"><?= substr($produto['descricao'], 0, 50) ?><?= (strlen($produto['descricao']) > 50) ? '...' : '' ?></h3>
-                <p style="margin: 0 0 15px 0; font-weight: bold; color: #e44d26;">R$ <?= number_format($produto['preco'], 2, ',', '.') ?></p>
-                
-                <div style="display: flex; justify-content: space-between;">
-                    <a href="/produto/editar?id=<?= $produto['id'] ?>" style="padding: 5px 10px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 3px;">Editar</a>
-                    <a href="/produto/excluir?id=<?= $produto['id'] ?>" style="padding: 5px 10px; background-color: #F44336; color: white; text-decoration: none; border-radius: 3px;" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
+                    
+                    <div class="produto-acoes">
+                        <a href="/produto/editar?id=<?= $produto['id'] ?>" class="btn-editar">Editar</a>
+                        <a href="/produto/excluir?id=<?= $produto['id'] ?>" class="btn-excluir" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
+                    </div>
                 </div>
             </div>
         <?php endforeach; ?>

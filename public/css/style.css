@@ -13,12 +13,14 @@ body {
     flex-direction: column;
 }
 
+/* Cabeçalho estilo Casas Luiza */
 .header {
     background-color: #0033B8;
     color: white;
     padding: 10px 0;
     display: flex;
     align-items: center;
+    border-bottom: 4px solid #ff0000;
 }
 
 .header-container {
@@ -45,6 +47,18 @@ body {
     gap: 15px;
 }
 
+.user-icon {
+    background-color: #ff0000;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+}
+
 .login-link, .logout-link {
     color: white;
     text-decoration: none;
@@ -68,6 +82,7 @@ body {
     max-width: 1200px;
 }
 
+/* Navegação */
 .navbar {
     background-color: #002796;
     overflow: hidden;
@@ -92,25 +107,183 @@ body {
     background-color: #003DE6;
 }
 
+/* Títulos */
 h1, h2 {
     color: #0033B8;
     margin-bottom: 20px;
 }
 
-.product-card {
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
+/* Estilos para a página de produtos (Casas Luiza) */
+.container-titulo{
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0 10px 0;
+}
+
+.produtos-titulo {
+    color: #0099ff;
+    font-size: 32px;
+}
+
+.nova-produto-container {
     margin-bottom: 20px;
 }
 
-.product-img {
-    max-width: 100px;
-    height: auto;
-    display: block;
+.btn-novo-produto {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+}
+
+.btn-novo-produto:hover {
+    background-color: #45a049;
+}
+
+.produtos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.no-products {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.produto-card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: transform 0.2s;
+}
+
+.produto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.produto-imagem-container {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
     margin-bottom: 10px;
 }
 
+.produto-imagem {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+}
+
+.produto-sem-imagem {
+    height: 180px;
+    width: 100%;
+    background-color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+}
+
+.produto-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.produto-descricao {
+    font-size: 14px;
+    margin: 0 0 15px 0;
+    color: #333;
+    line-height: 1.4;
+    font-weight: normal;
+    height: 60px;
+    overflow: hidden;
+}
+
+.produto-precos {
+    margin-top: auto;
+    margin-bottom: 15px;
+}
+
+.produto-preco-original {
+    font-size: 12px;
+    color: #999;
+    text-decoration: line-through;
+    margin-bottom: 5px;
+}
+
+.produto-preco-atual {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.preco-prefixo {
+    font-size: 14px;
+    color: #333;
+}
+
+.preco-valor {
+    font-weight: bold;
+    font-size: 20px;
+    color: #0033B8;
+}
+
+.preco-sufixo {
+    font-size: 14px;
+    color: #333;
+}
+
+.produto-acoes {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+}
+
+.btn-editar, .btn-excluir {
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 14px;
+    flex: 1;
+    margin: 0 5px;
+}
+
+.btn-editar {
+    background-color: #0029BC;
+    color: white;
+}
+
+.btn-editar:hover {
+    background-color: #002096;
+}
+
+.btn-excluir {
+    background-color: #EE1627;
+    color: white;
+}
+
+.btn-excluir:hover {
+    background-color: #b91320;
+}
+
+/* Estilos para o formulário de feedback */
 .feedback-card {
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -245,4 +418,13 @@ h1, h2 {
     border: 1px dashed #ddd;
     border-radius: 5px;
     background-color: #f9f9f9;
+}
+
+/* Rodapé estilo Casas Luiza */
+.footer {
+    background-color: #0033B8;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    margin-top: auto;
 }

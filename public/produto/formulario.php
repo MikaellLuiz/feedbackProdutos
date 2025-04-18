@@ -19,7 +19,7 @@
             <?php if($parametro != null && !empty($parametro[0]['imagem'])): ?>
                 <div class="current-image">
                     <p>Imagem atual:</p>
-                    <img src="/public<?= $parametro[0]['imagem'] ?>" alt="Imagem do produto" style="max-width: 150px;">
+                    <img src="<?= $parametro[0]['imagem'] ?>" alt="Imagem do produto" style="max-width: 150px;">
                     <input type="hidden" name="imagem_atual" value="<?= $parametro[0]['imagem'] ?>">
                 </div>
             <?php endif; ?>
