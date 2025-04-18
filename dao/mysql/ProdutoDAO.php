@@ -7,12 +7,12 @@ use CasasLuiza\generic\MysqlFactory;
 
 class ProdutoDAO extends MysqlFactory implements IProdutoDAO{
     public function listar(){
-        $sql = "SELECT id, descricao, preco, imagem FROM produtos";
+        $sql = "SELECT id, nome, descricao, preco, imagem FROM produtos";
         return $this->banco->executar($sql);
     }
     
     public function obterPorId(int $id){
-        $sql = "SELECT id, descricao, preco, imagem 
+        $sql = "SELECT id, nome, descricao, preco, imagem 
                 FROM produtos 
                 WHERE id = :id";
 
@@ -23,11 +23,12 @@ class ProdutoDAO extends MysqlFactory implements IProdutoDAO{
         return $this->banco->executar($sql, $param);
     }
     
-    public function inserir(string $descricao, float $preco, string $imagem){
-        $sql = "INSERT INTO produtos (descricao, preco, imagem) 
-                VALUES (:descricao, :preco, :imagem)";
+    public function inserir(string $nome, string $descricao, float $preco, string $imagem){
+        $sql = "INSERT INTO produtos (nome, descricao, preco, imagem) 
+                VALUES (:nome, :descricao, :preco, :imagem)";
 
         $param = [
+            ":nome" => $nome,
             ":descricao" => $descricao,
             ":preco" => $preco,
             ":imagem" => $imagem
@@ -36,15 +37,17 @@ class ProdutoDAO extends MysqlFactory implements IProdutoDAO{
         return $this->banco->executar($sql, $param);
     }
 
-    public function alterar(int $id, string $descricao, float $preco, string $imagem){
+    public function alterar(int $id, string $nome, string $descricao, float $preco, string $imagem){
         $sql = "UPDATE produtos 
-                SET descricao = :descricao, 
+                SET nome = :nome,
+                    descricao = :descricao, 
                     preco = :preco, 
                     imagem = :imagem 
                 WHERE id = :id";
 
         $param = [
             ":id" => $id,
+            ":nome" => $nome,
             ":descricao" => $descricao,
             ":preco" => $preco,
             ":imagem" => $imagem

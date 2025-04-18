@@ -12,12 +12,12 @@ class ProdutoService extends ProdutoDAO {
         return parent::obterPorId($id);
     }
 
-    public function inserirProduto(string $descricao, float $preco, string $imagem) {
-        return parent::inserir($descricao, $preco, $imagem);
+    public function inserirProduto(string $nome, string $descricao, float $preco, string $imagem) {
+        return parent::inserir($nome, $descricao, $preco, $imagem);
     }
 
-    public function alterarProduto(int $id, string $descricao, float $preco, string $imagem) {
-        return parent::alterar($id, $descricao, $preco, $imagem);
+    public function alterarProduto(int $id, string $nome, string $descricao, float $preco, string $imagem) {
+        return parent::alterar($id, $nome, $descricao, $preco, $imagem);
     }
 
     public function excluirProduto(int $id) {

@@ -11,7 +11,7 @@
         <?php foreach($parametro as $produto): ?>
             <div class="product-card">
                 <?php if(!empty($produto['imagem'])): ?>
-                    <img src="<?= $produto['imagem'] ?>" alt="<?= substr($produto['descricao'], 0, 30) ?>..." class="product-img" style="max-width: 100%; height: auto; margin-bottom: 10px;">
+                    <img src="/public<?= $produto['imagem'] ?>" alt="<?= substr($produto['descricao'], 0, 30) ?>..." class="product-img" style="max-width: 100%; height: auto; margin-bottom: 10px;">
                 <?php else: ?>
                     <div style="height: 100px; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
                         <span style="color: #999;">Sem imagem</span>

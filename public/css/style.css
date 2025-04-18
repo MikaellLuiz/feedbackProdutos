@@ -130,10 +130,20 @@ h1, h2 {
 
 .form-control {
     width: 100%;
-    padding: 10px;
+    padding: 15px;
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.form-control::placeholder {
+    color: #666;
+}
+
+.form-control:focus {
+    border-color: #0033B8;
+    outline: none;
 }
 
 .btn {
@@ -148,6 +158,15 @@ h1, h2 {
 .btn-primary {
     background-color: #0033B8;
     color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 15px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 300px;
+    margin: 20px auto 0;
+    display: block;
 }
 
 .btn-primary:hover {
@@ -211,4 +230,19 @@ h1, h2 {
     margin-bottom: 15px;
     border-radius: 4px;
     text-align: center;
+}
+
+/* Estilos para o formulário de produto */
+.container-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+.current-image {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px dashed #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
 }
