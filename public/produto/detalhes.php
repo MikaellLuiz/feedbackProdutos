@@ -7,6 +7,16 @@ $totalAvaliacoes = $parametro['total_avaliacoes'] ?? 0;
 
 // Formata a nota média para exibição (1 casa decimal)
 $notaMediaFormatada = number_format($notaMedia, 1, ',', '.');
+
+// Inicializa a sessão se ainda não estiver iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Verifica se o usuário está logado
+$logado = isset($_SESSION['logado']) && $_SESSION['logado'] === true;
+$usuarioId = $logado ? $_SESSION['usuario_id'] : 0;
+$usuarioNome = $logado ? $_SESSION['usuario_nome'] : '';
 ?>
 
 <div class="produto-detalhes-container">
@@ -55,7 +65,19 @@ $notaMediaFormatada = number_format($notaMedia, 1, ',', '.');
             </div>
 
             <div class="produto-detalhes-acoes">
-                <a href="/feedback/novo?produto_id=<?= $produto['id'] ?>" class="btn-adicionar-avaliacao">Avaliar Produto</a>
+                <?php if($logado): ?>
+                    <?php 
+                    // Verifica se o usuário já avaliou este produto
+                    $jaAvaliou = (new \CasasLuiza\service\FeedbackService())->usuarioJaAvaliouProduto($produto['id'], $usuarioId);
+                    if($jaAvaliou): 
+                    ?>
+                        <a href="/usuario/perfil" class="btn-adicionar-avaliacao">Ver Sua Avaliação</a>
+                    <?php else: ?>
+                        <button class="btn-adicionar-avaliacao" onclick="abrirModal()">Avaliar Produto</button>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <a href="/usuario/login" class="btn-adicionar-avaliacao">Faça login para avaliar</a>
+                <?php endif; ?>
                 <a href="/produto/listar" class="btn-voltar">Voltar para Lista</a>
             </div>
         </div>
@@ -90,3 +112,88 @@ $notaMediaFormatada = number_format($notaMedia, 1, ',', '.');
         <?php endif; ?>
     </div>
 </div>
+
+<!-- Modal de Avaliação -->
+<div id="modal-avaliacao" class="modal">
+    <div class="modal-content">
+        <span class="fechar-modal" onclick="fecharModal()">&times;</span>
+        <h2>Avaliar <?= $produto['nome'] ?></h2>
+        
+        <form id="form-avaliacao" method="POST" action="/feedback/adicionar_ajax">
+            <input type="hidden" name="produto_id" value="<?= $produto['id'] ?>">
+            <input type="hidden" name="usuario_id" value="<?= $usuarioId ?>">
+            
+            <div class="form-group">
+                <label>Sua nota:</label>
+                <div class="avaliacao-estrelas">
+                    <?php for($i = 5; $i >= 1; $i--): ?>
+                        <input type="radio" id="estrela<?= $i ?>" name="nota" value="<?= $i ?>" required>
+                        <label for="estrela<?= $i ?>" class="estrela-label">★</label>
+                    <?php endfor; ?>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="comentario">Seu comentário:</label>
+                <textarea id="comentario" name="comentario" class="form-control" required></textarea>
+            </div>
+            
+            <div class="form-group text-center">
+                <button type="submit" class="btn-enviar-avaliacao">Enviar Avaliação</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Modal functions
+function abrirModal() {
+    const modal = document.getElementById('modal-avaliacao');
+    modal.style.display = 'block';
+    setTimeout(() => {
+        modal.classList.add('aberto');
+    }, 10);
+}
+
+function fecharModal() {
+    const modal = document.getElementById('modal-avaliacao');
+    modal.classList.remove('aberto');
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
+
+// Fechar o modal se clicar fora do conteúdo
+window.onclick = function(event) {
+    const modal = document.getElementById('modal-avaliacao');
+    if (event.target == modal) {
+        fecharModal();
+    }
+}
+
+// Formulário ajax para enviar avaliação sem recarregar a página
+document.getElementById('form-avaliacao').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('/feedback/adicionar_ajax', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            fecharModal();
+            // Recarregar a página para mostrar a nova avaliação
+            location.reload();
+        } else {
+            alert(data.message || 'Ocorreu um erro ao enviar sua avaliação.');
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Ocorreu um erro ao enviar sua avaliação.');
+    });
+});
+</script>

@@ -79,4 +79,19 @@ class UsuarioService extends UsuarioDAO {
     public function obterPorEmail(string $email) {
         return parent::obterUsuarioPorEmail($email);
     }
+
+    /**
+     * Verifica se o e-mail já existe para outro usuário (não para o usuário atual)
+     * Útil para verificar se um e-mail está disponível durante a edição de um usuário
+     *
+     * @param string $email E-mail a verificar
+     * @param int $usuarioId ID do usuário atual (para exclusão da verificação)
+     * @return bool True se o e-mail já existe para outro usuário, False caso contrário
+     */
+    public function emailExisteOutroUsuario(string $email, int $usuarioId) {
+        $usuarios = parent::obterUsuarioPorEmail($email);
+        
+        // Só retorna true se encontrou algum usuário com este email E o ID é diferente
+        return !empty($usuarios) && $usuarios[0]['id'] != $usuarioId;
+    }
 }

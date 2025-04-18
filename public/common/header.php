@@ -27,10 +27,12 @@
             </div>
             <div class="user-info">
                 <?php if ($logado): ?>
-                    <span><?= $nomeUsuario ?></span>
-                    <div class="user-icon">
-                        <i class="fas fa-user"></i>
-                    </div>
+                    <a href="/usuario/perfil" class="user-profile-link">
+                        <span><?= $nomeUsuario ?></span>
+                        <div class="user-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </a>
                     <a href="/usuario/logout" class="logout-link">Sair</a>
                 <?php else: ?>
                     <div class="user-icon">
@@ -48,6 +50,9 @@
             <?php endif; ?>
             <a href="/produto/listar">Produtos</a>
             <a href="/feedback/listar">Feedbacks</a>
+            <?php if ($logado): ?>
+                <a href="/usuario/perfil">Minha Conta</a>
+            <?php endif; ?>
         </div>
     </div>
     <div class="container">

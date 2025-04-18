@@ -23,4 +23,25 @@ class FeedbackService extends FeedbackDAO {
     public function excluirFeedback(int $id) {
         return parent::excluir($id);
     }
+    
+    /**
+     * Obtém todos os feedbacks feitos por um usuário específico
+     *
+     * @param int $usuarioId ID do usuário
+     * @return array Lista de feedbacks do usuário
+     */
+    public function obterFeedbacksPorUsuario(int $usuarioId) {
+        return parent::obterPorUsuarioId($usuarioId);
+    }
+
+    /**
+     * Verifica se um usuário já avaliou um produto específico
+     *
+     * @param int $produtoId ID do produto
+     * @param int $usuarioId ID do usuário
+     * @return bool True se o usuário já avaliou o produto, False caso contrário
+     */
+    public function usuarioJaAvaliouProduto(int $produtoId, int $usuarioId) {
+        return parent::usuarioJaAvaliouProduto($produtoId, $usuarioId);
+    }
 }

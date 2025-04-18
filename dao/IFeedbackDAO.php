@@ -8,4 +8,6 @@ interface IFeedbackDAO{
     public function inserir(int $produto_id, int $usuario_id, int $nota, string $comentario);
     public function alterar(int $id, int $produto_id, int $usuario_id, int $nota, string $comentario);
     public function excluir(int $id);
+    public function obterPorUsuarioId(int $usuarioId);
+    public function usuarioJaAvaliouProduto(int $produto_id, int $usuario_id);
 }
