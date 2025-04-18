@@ -30,7 +30,7 @@ class UsuarioDAO extends MysqlFactory implements IUsuarioDAO{
             ":nome" => $nome,
             ":email" => $email,
             ":senha" => $senha,
-            ":admin" => $admin
+            ":admin" => $admin ? 1 : 0
         ];
 
         return $this->banco->executar($sql, $param);
@@ -49,7 +49,7 @@ class UsuarioDAO extends MysqlFactory implements IUsuarioDAO{
             ":nome" => $nome,
             ":email" => $email,
             ":senha" => $senha,
-            ":admin" => $admin
+            ":admin" => $admin ? 1 : 0
         ];
 
         return $this->banco->executar($sql, $param);
@@ -62,6 +62,24 @@ class UsuarioDAO extends MysqlFactory implements IUsuarioDAO{
             ":id" => $id
         ];
 
+        return $this->banco->executar($sql, $param);
+    }
+    
+    /**
+     * Obtém um usuário pelo e-mail
+     * 
+     * @param string $email O e-mail do usuário
+     * @return array Dados do usuário
+     */
+    public function obterUsuarioPorEmail(string $email){
+        $sql = "SELECT id, nome, email, senha, admin
+                FROM usuarios
+                WHERE email = :email";
+
+        $param = [
+            ":email" => $email
+        ];
+        
         return $this->banco->executar($sql, $param);
     }
 }

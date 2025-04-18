@@ -8,4 +8,5 @@ interface IUsuarioDAO{
     public function inserir(string $nome, string $email, string $senha, bool $admin);
     public function alterar(int $id, string $nome, string $email, string $senha, bool $admin);
     public function excluir(int $id);
+    public function obterUsuarioPorEmail(string $email);
 }

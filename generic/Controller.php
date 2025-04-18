@@ -16,6 +16,13 @@ class Controller{
             "usuario/editar" => new Acao("UsuarioController", "editar"),
             "usuario/excluir" => new Acao("UsuarioController", "excluir"),
             
+            // Rotas para autenticação
+            "usuario/login" => new Acao("UsuarioController", "login"),
+            "usuario/autenticar" => new Acao("UsuarioController", "autenticar"),
+            "usuario/registrar" => new Acao("UsuarioController", "registrar"),
+            "usuario/completar_registro" => new Acao("UsuarioController", "completarRegistro"),
+            "usuario/logout" => new Acao("UsuarioController", "logout"),
+            
             // Rotas para Produto
             "produto/listar" => new Acao("ProdutoController", "listar"),
             "produto/novo" => new Acao("ProdutoController", "novo"),
