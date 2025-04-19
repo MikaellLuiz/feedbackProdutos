@@ -6,14 +6,14 @@ use CasasLuiza\generic\MysqlFactory;
 
 class UsuarioDAO extends MysqlFactory implements IUsuarioDAO{
     public function listar(){
-        $sql = "SELECT id, nome, email, admin FROM usuarios";
+        $sql = "SELECT id, nome, email, admin FROM usuarios WHERE deleted = FALSE";
         return $this->banco->executar($sql);
     }
     
     public function obterPorId(int $id){
         $sql = "SELECT id, nome, email, senha, admin
                 FROM usuarios
-                WHERE id = :id";
+                WHERE id = :id AND deleted = FALSE";
 
         $param = [
             ":id" => $id
@@ -56,7 +56,7 @@ class UsuarioDAO extends MysqlFactory implements IUsuarioDAO{
     }
 
     public function excluir(int $id){
-        $sql = "DELETE FROM usuarios WHERE id = :id";
+        $sql = "UPDATE usuarios SET deleted = TRUE WHERE id = :id";
 
         $param = [
             ":id" => $id
@@ -74,7 +74,7 @@ class UsuarioDAO extends MysqlFactory implements IUsuarioDAO{
     public function obterUsuarioPorEmail(string $email){
         $sql = "SELECT id, nome, email, senha, admin
                 FROM usuarios
-                WHERE email = :email";
+                WHERE email = :email AND deleted = FALSE";
 
         $param = [
             ":email" => $email

@@ -56,10 +56,33 @@ class UsuarioController {
     }
 
     public function excluir() {
+        // Inicializa a sessão se ainda não estiver iniciada
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         $id = $_GET['id'] ?? 0;
         
         if ($id > 0) {
+            // Verifica se o usuário é um administrador
+            $usuario = $this->usuarioService->obterUsuarioPorId($id);
+            
+            if (!empty($usuario) && isset($usuario[0]['admin']) && $usuario[0]['admin']) {
+                $_SESSION['erro_exclusao'] = 'Não é permitido excluir usuários administradores.';
+                header('Location: /usuario/listar');
+                exit;
+            }
+            
+            // Exclui o usuário
             $this->usuarioService->excluirUsuario($id);
+            
+            // Verifica se o usuário excluído é o usuário atualmente logado
+            if (isset($_SESSION['usuario_id']) && $_SESSION['usuario_id'] == $id) {
+                // Faz logout
+                session_destroy();
+                header('Location: /usuario/login');
+                exit;
+            }
         }
         
         header('Location: /usuario/listar');
