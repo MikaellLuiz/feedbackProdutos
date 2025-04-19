@@ -46,7 +46,7 @@
     <div class="navbar">
         <div class="navbar-container">
             <?php if ($isAdmin): ?>
-                <a href="/usuario/listar">Usuários</a>
+                <a href="/usuario/admin">Painel Admin</a>
             <?php endif; ?>
             <a href="/produto/listar">Produtos</a>
             <a href="/feedback/listar">Feedbacks</a>

@@ -29,3 +29,8 @@ CREATE TABLE IF NOT EXISTS feedbacks (
     FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE CASCADE,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
+
+-- Inserir usuário administrador padrão
+-- Senha: admin123 (hash gerado com password_hash)
+INSERT INTO usuarios (nome, email, senha, admin) 
+VALUES ('Administrador', 'admin@casasluiza.com', '$2y$10$IeQZ9AqXQPrv65fQiRDzb.fwvTUQpEqkvtXJpGwCPcGEO0UX3BCBq', 1);

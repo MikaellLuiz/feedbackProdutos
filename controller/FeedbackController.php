@@ -90,7 +90,37 @@ class FeedbackController {
     }
 
     public function editar() {
+        // Inicializa a sessão se ainda não estiver iniciada
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         $id = $_GET['id'] ?? 0;
+        
+        // Obtém o feedback para verificar permissões
+        $feedback = $this->feedbackService->obterFeedbackPorId($id);
+        
+        // Verifica se o feedback existe
+        if (empty($feedback)) {
+            header('Location: /feedback/listar');
+            exit;
+        }
+        
+        // Verifica se o usuário está logado
+        if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
+            header('Location: /usuario/login');
+            exit;
+        }
+        
+        $usuarioId = $_SESSION['usuario_id'];
+        $isAdmin = isset($_SESSION['admin']) && $_SESSION['admin'] == 1;
+        
+        // Verifica se o usuário tem permissão para editar este feedback
+        // (precisa ser o autor do feedback ou um administrador)
+        if (!$isAdmin && $feedback[0]['usuario_id'] != $usuarioId) {
+            header('Location: /feedback/listar');
+            exit;
+        }
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $produto_id = intval($_POST['produto_id'] ?? 0);
@@ -99,31 +129,62 @@ class FeedbackController {
             $comentario = $_POST['comentario'] ?? '';
             
             $this->feedbackService->alterarFeedback($id, $produto_id, $usuario_id, $nota, $comentario);
-            header('Location: index.php?rota=feedback/listar');
+            header('Location: /feedback/listar');
             exit;
         }
         
-        // Preparamos os dados aqui
-        $feedback = $this->feedbackService->obterFeedbackPorId($id);
-        
-        // Definimos as variáveis como globais para que o template possa acessá-las
-        global $produtos, $usuarios, $parametro;
+        // Obtém os dados necessários para o formulário
         $produtos = $this->produtoService->listarProdutos();
         $usuarios = $this->usuarioService->listarUsuarios();
-        $parametro = $feedback;
         
-        // Usamos o método layout do template
-        $this->template->layout('/feedback/formulario.php', $feedback);
+        // Prepara os dados para o template
+        $dados = [
+            'feedback' => $feedback[0],
+            'produtos' => $produtos,
+            'usuarios' => $usuarios
+        ];
+        
+        $this->template->layout('/feedback/formulario.php', $dados);
     }
 
     public function excluir() {
+        // Inicializa a sessão se ainda não estiver iniciada
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         $id = $_GET['id'] ?? 0;
+        
+        // Verifica se o usuário está logado
+        if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
+            header('Location: /usuario/login');
+            exit;
+        }
+        
+        // Obtém o feedback para verificar permissões
+        $feedback = $this->feedbackService->obterFeedbackPorId($id);
+        
+        // Verifica se o feedback existe
+        if (empty($feedback)) {
+            header('Location: /feedback/listar');
+            exit;
+        }
+        
+        $usuarioId = $_SESSION['usuario_id'];
+        $isAdmin = isset($_SESSION['admin']) && $_SESSION['admin'] == 1;
+        
+        // Verifica se o usuário tem permissão para excluir este feedback
+        // (precisa ser o autor do feedback ou um administrador)
+        if (!$isAdmin && $feedback[0]['usuario_id'] != $usuarioId) {
+            header('Location: /feedback/listar');
+            exit;
+        }
         
         if ($id > 0) {
             $this->feedbackService->excluirFeedback($id);
         }
         
-        header('Location: index.php?rota=feedback/listar');
+        header('Location: /feedback/listar');
         exit;
     }
     

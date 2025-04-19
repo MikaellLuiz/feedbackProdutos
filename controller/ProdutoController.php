@@ -23,6 +23,13 @@ class ProdutoController {
     }
 
     public function novo() {
+        // Verifica se o usuário está logado e é administrador
+        session_start();
+        if (!isset($_SESSION['logado']) || !isset($_SESSION['admin']) || $_SESSION['admin'] != 1) {
+            header('Location: /produto/listar');
+            exit;
+        }
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nome = $_POST['nome'] ?? '';
             $descricao = $_POST['descricao'] ?? '';
@@ -40,6 +47,13 @@ class ProdutoController {
     }
 
     public function editar() {
+        // Verifica se o usuário está logado e é administrador
+        session_start();
+        if (!isset($_SESSION['logado']) || !isset($_SESSION['admin']) || $_SESSION['admin'] != 1) {
+            header('Location: /produto/listar');
+            exit;
+        }
+        
         $id = $_GET['id'] ?? 0;
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -65,6 +79,13 @@ class ProdutoController {
     }
 
     public function excluir() {
+        // Verifica se o usuário está logado e é administrador
+        session_start();
+        if (!isset($_SESSION['logado']) || !isset($_SESSION['admin']) || $_SESSION['admin'] != 1) {
+            header('Location: /produto/listar');
+            exit;
+        }
+        
         $id = $_GET['id'] ?? 0;
         
         if ($id > 0) {

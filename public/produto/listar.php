@@ -1,9 +1,21 @@
+<?php
+// Inicializa a sessão se ainda não estiver iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Verifica se o usuário é administrador
+$isAdmin = isset($_SESSION['logado']) && $_SESSION['logado'] === true && isset($_SESSION['admin']) && $_SESSION['admin'] == 1;
+?>
+
 <div class="container-titulo">
     <h1 class="produtos-titulo">Produtos</h1>
 
+    <?php if($isAdmin): ?>
     <div class="nova-produto-container">
         <a href="/produto/novo" class="btn-novo-produto">Novo Produto</a>
     </div>
+    <?php endif; ?>
 </div>
 
 <div class="produtos-grid">
@@ -39,10 +51,12 @@
                     </div>
                 </a>
                 
+                <?php if($isAdmin): ?>
                 <div class="produto-acoes">
                     <a href="/produto/editar?id=<?= $produto['id'] ?>" class="btn-editar">Editar</a>
                     <a href="/produto/excluir?id=<?= $produto['id'] ?>" class="btn-excluir" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
                 </div>
+                <?php endif; ?>
             </div>
         <?php endforeach; ?>
     <?php endif; ?>

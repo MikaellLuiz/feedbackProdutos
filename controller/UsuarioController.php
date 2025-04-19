@@ -358,6 +358,43 @@ class UsuarioController {
     }
     
     /**
+     * Exibe a página de painel admin com informações do usuário e lista de usuários
+     */
+    public function admin() {
+        // Inicializa a sessão se ainda não estiver iniciada
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        // Verifica se o usuário está logado e é administrador
+        if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true || !isset($_SESSION['admin']) || $_SESSION['admin'] != 1) {
+            header('Location: /');
+            exit;
+        }
+        
+        $usuarioId = $_SESSION['usuario_id'];
+        
+        // Obtém os dados do usuário atual (admin)
+        $usuario = $this->usuarioService->obterUsuarioPorId($usuarioId);
+        
+        // Obtém as avaliações do usuário
+        $avaliacoes = $this->feedbackService->obterFeedbacksPorUsuario($usuarioId);
+        
+        // Obtém todos os usuários para exibir na lista
+        $todosUsuarios = $this->usuarioService->listarUsuarios();
+        
+        // Prepara os dados para a view
+        $dados = [
+            'usuario' => $usuario[0] ?? [],
+            'avaliacoes' => $avaliacoes ?? [],
+            'todos_usuarios' => $todosUsuarios ?? []
+        ];
+        
+        // Exibe a página de admin
+        $this->template->layout('/usuario/admin.php', $dados);
+    }
+    
+    /**
      * Retorna uma resposta JSON de sucesso
      */
     private function retornarJsonSucesso($mensagem = '', $dados = []) {
