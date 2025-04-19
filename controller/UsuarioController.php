@@ -17,11 +17,21 @@ class UsuarioController {
         $this->template = new UsuarioTemplate();
     }
 
+    /**
+     * Lista todos os usuários cadastrados no sistema
+     * 
+     * @return void
+     */
     public function listar() {
         $usuarios = $this->usuarioService->listarUsuarios();
         $this->template->layout('/usuario/listar.php', $usuarios);
     }
 
+    /**
+     * Exibe o formulário para criação de um novo usuário e processa o envio do formulário
+     * 
+     * @return void
+     */
     public function novo() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nome = $_POST['nome'] ?? '';
@@ -37,6 +47,11 @@ class UsuarioController {
         $this->template->layout('/usuario/formulario.php');
     }
 
+    /**
+     * Exibe o formulário para edição de um usuário existente e processa o envio do formulário
+     * 
+     * @return void
+     */
     public function editar() {
         $id = $_GET['id'] ?? 0;
         
@@ -55,8 +70,12 @@ class UsuarioController {
         $this->template->layout('/usuario/formulario.php', $usuario);
     }
 
+    /**
+     * Exclui um usuário pelo ID, com verificações de permissão
+     * 
+     * @return void
+     */
     public function excluir() {
-        // Inicializa a sessão se ainda não estiver iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -64,7 +83,6 @@ class UsuarioController {
         $id = $_GET['id'] ?? 0;
         
         if ($id > 0) {
-            // Verifica se o usuário é um administrador
             $usuario = $this->usuarioService->obterUsuarioPorId($id);
             
             if (!empty($usuario) && isset($usuario[0]['admin']) && $usuario[0]['admin']) {
@@ -73,12 +91,9 @@ class UsuarioController {
                 exit;
             }
             
-            // Exclui o usuário
             $this->usuarioService->excluirUsuario($id);
             
-            // Verifica se o usuário excluído é o usuário atualmente logado
             if (isset($_SESSION['usuario_id']) && $_SESSION['usuario_id'] == $id) {
-                // Faz logout
                 session_destroy();
                 header('Location: /usuario/login');
                 exit;
@@ -91,9 +106,10 @@ class UsuarioController {
     
     /**
      * Exibe a página de login
+     * 
+     * @return void
      */
     public function login() {
-        // Inicializa a sessão se ainda não estiver iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -103,9 +119,10 @@ class UsuarioController {
     
     /**
      * Processa a autenticação do usuário
+     * 
+     * @return void
      */
     public function autenticar() {
-        // Inicializa a sessão se ainda não estiver iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -116,18 +133,15 @@ class UsuarioController {
         $resultado = $this->usuarioService->autenticarUsuario($email, $senha);
         
         if ($resultado) {
-            // Login bem-sucedido - armazena os dados do usuário na sessão
             $_SESSION['usuario_id'] = $resultado['id'];
             $_SESSION['usuario_nome'] = $resultado['nome'];
             $_SESSION['usuario_email'] = $resultado['email'];
             $_SESSION['admin'] = $resultado['admin'];
             $_SESSION['logado'] = true;
             
-            // Redireciona para a página inicial
             header('Location: /');
             exit;
         } else {
-            // Login falhou - exibe mensagem de erro
             $_SESSION['erro_login'] = 'E-mail ou senha inválidos. Tente novamente.';
             header('Location: /usuario/login');
             exit;
@@ -136,38 +150,37 @@ class UsuarioController {
     
     /**
      * Processa o formulário de registro inicial (apenas email)
+     * 
+     * @return void
      */
     public function registrar() {
-        // Inicializa a sessão se ainda não estiver iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         
         $email = $_POST['email'] ?? '';
         
-        // Verifica se o e-mail já existe
         if ($this->usuarioService->emailExiste($email)) {
             $_SESSION['erro_login'] = 'Este e-mail já está cadastrado. Por favor, faça login.';
             header('Location: /usuario/login');
             exit;
         }
         
-        // Armazena o e-mail na sessão e redireciona para o formulário completo
         $_SESSION['novo_email'] = $email;
         header('Location: /usuario/completar_registro');
         exit;
     }
     
     /**
-     * Exibe o formulário para completar o registro
+     * Exibe o formulário para completar o registro e processa o envio do formulário
+     * 
+     * @return void
      */
     public function completarRegistro() {
-        // Inicializa a sessão se ainda não estiver iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         
-        // Verifica se há um e-mail na sessão
         if (!isset($_SESSION['novo_email'])) {
             header('Location: /usuario/login');
             exit;
@@ -179,11 +192,9 @@ class UsuarioController {
             $nome = $_POST['nome'] ?? '';
             $senha = $_POST['senha'] ?? '';
             
-            // Cria o usuário e limpa a sessão
             $this->usuarioService->inserirUsuario($nome, $email, $senha, false);
             unset($_SESSION['novo_email']);
             
-            // Redireciona para o login com mensagem de sucesso
             $_SESSION['sucesso_registro'] = 'Cadastro realizado com sucesso! Por favor, faça login.';
             header('Location: /usuario/login');
             exit;
@@ -193,32 +204,31 @@ class UsuarioController {
     }
     
     /**
-     * Realiza o logout do usuário
+     * Realiza o logout do usuário destruindo a sessão
+     * 
+     * @return void
      */
     public function logout() {
-        // Inicializa a sessão se ainda não estiver iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         
-        // Destrói a sessão
         session_destroy();
         
-        // Redireciona para a página inicial
         header('Location: /');
         exit;
     }
     
     /**
-     * Exibe a página de perfil do usuário
+     * Exibe a página de perfil do usuário com suas informações e avaliações
+     * 
+     * @return void
      */
     public function perfil() {
-        // Inicializa a sessão se ainda não estiver iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         
-        // Verifica se o usuário está logado
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
             header('Location: /usuario/login');
             exit;
@@ -226,68 +236,58 @@ class UsuarioController {
         
         $usuarioId = $_SESSION['usuario_id'];
         
-        // Obtém os dados do usuário
         $usuario = $this->usuarioService->obterUsuarioPorId($usuarioId);
         
-        // Obtém as avaliações do usuário
         $avaliacoes = $this->feedbackService->obterFeedbacksPorUsuario($usuarioId);
         
-        // Prepara os dados para a view
         $dados = [
             'usuario' => $usuario[0] ?? [],
             'avaliacoes' => $avaliacoes ?? []
         ];
         
-        // Exibe a página de perfil
         $this->template->layout('/usuario/perfil.php', $dados);
     }
     
     /**
      * Edita informações do usuário via AJAX
+     * 
+     * @return void
      */
     public function editarAjax() {
-        // Inicializa a sessão se ainda não estiver iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         
-        // Verifica se o usuário está logado
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
             $this->retornarJsonErro('Usuário não autenticado');
             return;
         }
         
-        // Verifica se a requisição é POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->retornarJsonErro('Método não permitido');
             return;
         }
         
-        // Obtém os dados do formulário
         $id = intval($_POST['id'] ?? 0);
         $nome = $_POST['nome'] ?? '';
         $email = $_POST['email'] ?? '';
         
-        // Verifica se o usuário está editando seu próprio perfil
         if ($id !== $_SESSION['usuario_id']) {
             $this->retornarJsonErro('Você só pode editar seu próprio perfil');
             return;
         }
         
-        // Valida os dados
         if ($id <= 0 || empty($nome) || empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->retornarJsonErro('Dados inválidos');
             return;
         }
         
-        // Verifica se o email já existe (exceto para o próprio usuário)
         if ($this->usuarioService->emailExisteOutroUsuario($email, $id)) {
             $this->retornarJsonErro('Este e-mail já está sendo usado por outro usuário');
             return;
         }
         
         try {
-            // Obtém o usuário atual para manter a senha e o status de admin
             $usuario = $this->usuarioService->obterUsuarioPorId($id);
             if (empty($usuario)) {
                 $this->retornarJsonErro('Usuário não encontrado');
@@ -297,10 +297,8 @@ class UsuarioController {
             $senha = $usuario[0]['senha'];
             $admin = $usuario[0]['admin'];
             
-            // Atualiza as informações do usuário
             $this->usuarioService->alterarUsuario($id, $nome, $email, $senha, $admin);
             
-            // Atualiza os dados de sessão
             $_SESSION['usuario_nome'] = $nome;
             $_SESSION['usuario_email'] = $email;
             
@@ -312,38 +310,34 @@ class UsuarioController {
     
     /**
      * Altera a senha do usuário via AJAX
+     * 
+     * @return void
      */
     public function alterarSenhaAjax() {
-        // Inicializa a sessão se ainda não estiver iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         
-        // Verifica se o usuário está logado
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
             $this->retornarJsonErro('Usuário não autenticado');
             return;
         }
         
-        // Verifica se a requisição é POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->retornarJsonErro('Método não permitido');
             return;
         }
         
-        // Obtém os dados do formulário
         $id = intval($_POST['id'] ?? 0);
         $senhaAtual = $_POST['senha_atual'] ?? '';
         $novaSenha = $_POST['nova_senha'] ?? '';
         $confirmarSenha = $_POST['confirmar_senha'] ?? '';
         
-        // Verifica se o usuário está alterando sua própria senha
         if ($id !== $_SESSION['usuario_id']) {
             $this->retornarJsonErro('Você só pode alterar sua própria senha');
             return;
         }
         
-        // Valida os dados
         if ($id <= 0 || empty($senhaAtual) || empty($novaSenha) || empty($confirmarSenha)) {
             $this->retornarJsonErro('Todos os campos são obrigatórios');
             return;
@@ -355,17 +349,14 @@ class UsuarioController {
         }
         
         try {
-            // Verifica se a senha atual está correta
             $usuario = $this->usuarioService->obterUsuarioPorId($id);
             if (empty($usuario) || !password_verify($senhaAtual, $usuario[0]['senha'])) {
                 $this->retornarJsonErro('Senha atual incorreta');
                 return;
             }
             
-            // Hash da nova senha
             $senhaCriptografada = password_hash($novaSenha, PASSWORD_DEFAULT);
             
-            // Atualiza a senha do usuário
             $this->usuarioService->alterarUsuario(
                 $id, 
                 $usuario[0]['nome'], 
@@ -382,14 +373,14 @@ class UsuarioController {
     
     /**
      * Exibe a página de painel admin com informações do usuário e lista de usuários
+     * 
+     * @return void
      */
     public function admin() {
-        // Inicializa a sessão se ainda não estiver iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         
-        // Verifica se o usuário está logado e é administrador
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true || !isset($_SESSION['admin']) || $_SESSION['admin'] != 1) {
             header('Location: /');
             exit;
@@ -397,28 +388,27 @@ class UsuarioController {
         
         $usuarioId = $_SESSION['usuario_id'];
         
-        // Obtém os dados do usuário atual (admin)
         $usuario = $this->usuarioService->obterUsuarioPorId($usuarioId);
         
-        // Obtém as avaliações do usuário
         $avaliacoes = $this->feedbackService->obterFeedbacksPorUsuario($usuarioId);
         
-        // Obtém todos os usuários para exibir na lista
         $todosUsuarios = $this->usuarioService->listarUsuarios();
         
-        // Prepara os dados para a view
         $dados = [
             'usuario' => $usuario[0] ?? [],
             'avaliacoes' => $avaliacoes ?? [],
             'todos_usuarios' => $todosUsuarios ?? []
         ];
         
-        // Exibe a página de admin
         $this->template->layout('/usuario/admin.php', $dados);
     }
     
     /**
      * Retorna uma resposta JSON de sucesso
+     * 
+     * @param string $mensagem Mensagem de sucesso
+     * @param array $dados Dados adicionais a serem retornados
+     * @return void
      */
     private function retornarJsonSucesso($mensagem = '', $dados = []) {
         $resposta = [
@@ -435,6 +425,10 @@ class UsuarioController {
     
     /**
      * Retorna uma resposta JSON de erro
+     * 
+     * @param string $mensagem Mensagem de erro
+     * @param int $codigo Código HTTP de erro
+     * @return void
      */
     private function retornarJsonErro($mensagem = '', $codigo = 400) {
         http_response_code($codigo);
@@ -449,6 +443,9 @@ class UsuarioController {
     
     /**
      * Envia uma resposta JSON
+     * 
+     * @param array $dados Dados a serem convertidos para JSON
+     * @return void
      */
     private function enviarJsonResponse($dados) {
         header('Content-Type: application/json');

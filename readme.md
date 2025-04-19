@@ -1,4 +1,4 @@
-# Sistema de Feedback de Produtos
+# Sistema de Feedback de Produtos - Casas Luiza
 
 Este projeto foi desenvolvido como parte da disciplina de Aplicações para Internet na Universidade de Uberaba (UNIUBE), com o objetivo de criar um sistema web utilizando PHP e o padrão de arquitetura MVC (Model-View-Controller), junto com outros padrões de projeto como DAO (Data Access Object) e Service.
 
@@ -20,28 +20,28 @@ O projeto segue uma arquitetura em camadas bem definida:
 ```
 feedbackProdutos/
 ├── controller/             # Controladores que gerenciam as requisições
-│   ├── FeedbackController.php
-│   ├── ProdutoController.php
-│   └── UsuarioController.php
 ├── dao/                    # Camada de acesso a dados
 │   ├── mysql/              # Implementações específicas para MySQL
-│   │   ├── FeedbackDAO.php
-│   │   ├── ProdutoDAO.php
-│   │   └── UsuarioDAO.PHP
-│   ├── IFeedbackDAO.php    # Interfaces que definem os contratos
-│   ├── IProdutoDAO.php
-│   └── IUsuarioDAO.php
+│   └── interfaces          # Interfaces que definem os contratos
 ├── service/                # Camada de serviços para regras de negócio
-│   ├── FeedbackService.php
-│   ├── ProdutoService.php
-│   └── UsuarioService.php
-├── genetic/                # Classes genéricas e utilitárias
+├── generic/                # Classes genéricas e utilitárias
 │   ├── Acao.php            # Classe para execução de ações nos controladores
 │   ├── Autoloader.php      # Carregador automático de classes
 │   ├── Controller.php      # Controlador genérico para roteamento
+│   ├── DotEnv.php          # Carrega variáveis de ambiente
 │   ├── MysqlFactory.php    # Fábrica para criação de objetos de banco de dados
 │   └── MysqlSingleton.php  # Implementação de Singleton para conexão com o MySQL
-├── database_feedbackProdutos.sql  # Script SQL para criação do banco de dados
+├── public/                 # Recursos públicos (CSS, imagens, templates)
+│   ├── common/             # Componentes comuns (header, footer)
+│   ├── css/                # Arquivos de estilo
+│   ├── img/                # Imagens do sistema
+│   │   └── produtos/       # Imagens dos produtos
+│   ├── feedback/           # Templates para feedback
+│   ├── produto/            # Templates para produtos
+│   └── usuario/            # Templates para usuários
+├── template/               # Classes de template
+├── create_feedbackProdutos.sql  # Script SQL para criação do banco (estrutura inicial)
+├── backup_feedbackProdutos.sql  # Script SQL para restauração completa do banco
 ├── index.php               # Ponto de entrada da aplicação
 └── README.md               # Documentação do projeto
 ```
@@ -50,7 +50,7 @@ feedbackProdutos/
 
 1. **MVC (Model-View-Controller)**:
    - **Model**: Representado pelas classes DAO e Services
-   - **View**: Templates a serem implementados (HTML/CSS)
+   - **View**: Templates PHP que geram a interface do usuário
    - **Controller**: Classes que processam as requisições e coordenam o fluxo
 
 2. **DAO (Data Access Object)**:
@@ -70,29 +70,93 @@ feedbackProdutos/
 
 O sistema utiliza um banco de dados MySQL com três tabelas principais:
 
-1. **usuarios**: Armazena informações dos usuários (id, nome, email, senha, admin)
-2. **produtos**: Contém dados dos produtos (id, descricao, preco, imagem)
+1. **usuarios**: Armazena informações dos usuários (id, nome, email, senha, admin, deleted)
+2. **produtos**: Contém dados dos produtos (id, nome, descricao, preco, imagem)
 3. **feedbacks**: Registra avaliações dos usuários sobre produtos (id, produto_id, usuario_id, nota, comentario)
 
-O script para criação do banco está disponível no arquivo `database_feedbackProdutos.sql`.
+### 🔄 Opções para Criação do Banco de Dados
+
+O projeto disponibiliza dois arquivos SQL para configuração do banco de dados:
+
+#### Opção 1: Criação de Banco Novo (apenas estrutura e usuário admin)
+
+Use o arquivo `create_feedbackProdutos.sql` para criar um banco de dados limpo com apenas a estrutura e o usuário administrador padrão.
+
+**Passo a passo:**
+
+1. Abra o MySQL Workbench e conecte-se ao seu servidor
+2. Selecione: **Server > Data Import**
+3. Escolha **Import from Self-Contained File** e localize o arquivo `create_feedbackProdutos.sql`
+4. Selecione **New** para criar um novo esquema chamado `feedback_produtos` (ou use um existente)
+5. Clique em **Start Import**
+
+**Alternativa via linha de comando:**
+
+```bash
+mysql -u [seu_usuario] -p < create_feedbackProdutos.sql
+```
+
+#### Opção 2: Restauração de Backup (com dados de demonstração)
+
+Use o arquivo `backup_feedbackProdutos.sql` para restaurar o banco de dados com produtos de demonstração.
+
+**Passo a passo:**
+
+1. Abra o MySQL Workbench e conecte-se ao seu servidor
+2. Selecione: **Server > Data Import**
+3. Escolha **Import from Self-Contained File** e localize o arquivo `backup_feedbackProdutos.sql`
+4. Selecione **New** para criar um novo esquema chamado `feedback_produtos` (ou use um existente)
+5. Clique em **Start Import**
+
+**Alternativa via linha de comando:**
+
+```bash
+mysql -u [seu_usuario] -p < backup_feedbackProdutos.sql
+```
+
+## ⚙️ Configuração do Ambiente
+
+1. **Requisitos**:
+   - Servidor web (Apache, Nginx)
+   - PHP 8.x
+   - MySQL 8.x
+
+2. **Configuração do arquivo .env**:
+   Crie um arquivo `.env` na raiz do projeto com as seguintes configurações:
+
+   ```
+   DB_HOST=localhost
+   DB_NAME=feedback_produtos
+   DB_USER=seu_usuario
+   DB_PASSWORD=sua_senha
+   ```
+
+3. **Permissões**:
+   - Certifique-se de que a pasta `public/img/produtos` tenha permissão de escrita para upload de imagens
 
 ## 🚀 Como Executar o Projeto
 
-1. **Configuração do Ambiente**:
-   - Instale um servidor web local (XAMPP, WAMP, etc.)
-   - Configure um servidor MySQL
-   - PHP 7.4 ou superior
-
-2. **Configuração do Banco de Dados**:
-   - Crie um banco de dados MySQL chamado `feedback_produtos`
-   - Importe o arquivo `database_feedbackProdutos.sql`
-
-3. **Configuração do Projeto**:
+1. **Configuração do Servidor Web**:
    - Clone este repositório na pasta do seu servidor web
-   - Verifique as configurações de conexão em `genetic/MysqlSingleton.php`
+   - Configure o servidor para apontar para a pasta do projeto
 
-4. **Execução**:
+2. **Inicialização**:
    - Acesse o projeto através do navegador: `http://localhost/feedbackProdutos`
+   - Faça login com as credenciais do administrador:
+     - Email: `admin@casasluiza.com`
+     - Senha: `admin123`
+
+## 🔐 Funcionalidades Disponíveis
+
+### Para Administradores:
+- Gerenciar usuários (criar, editar, desativar)
+- Gerenciar produtos (adicionar, editar, remover)
+- Visualizar todos os feedbacks
+
+### Para Usuários Comuns:
+- Visualizar produtos
+- Deixar avaliações e comentários
+- Gerenciar seu próprio perfil
 
 ## 👥 Autores
 

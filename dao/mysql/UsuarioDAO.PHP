@@ -36,6 +36,16 @@ class UsuarioDAO extends MysqlFactory implements IUsuarioDAO{
         return $this->banco->executar($sql, $param);
     }
 
+    /**
+     * Altera os dados de um usuário existente
+     * 
+     * @param int $id O ID do usuário a ser alterado
+     * @param string $nome O novo nome do usuário
+     * @param string $email O novo email do usuário
+     * @param string $senha A nova senha do usuário
+     * @param bool $admin Define se o usuário é administrador
+     * @return array Resultado da operação
+     */
     public function alterar(int $id, string $nome, string $email, string $senha, bool $admin){
         $sql = "UPDATE usuarios 
                 SET nome = :nome, 

@@ -3,28 +3,63 @@ namespace CasasLuiza\service;
 
 use CasasLuiza\dao\mysql\UsuarioDAO;
 
+/**
+ * Classe UsuarioService
+ * 
+ * Implementa os serviços relacionados aos usuários
+ * Estende a classe UsuarioDAO para acesso direto às operações de banco de dados
+ * 
+ * @package CasasLuiza\service
+ */
 class UsuarioService extends UsuarioDAO {
+    /**
+     * Lista todos os usuários não excluídos do sistema
+     * 
+     * @return array Lista de usuários
+     */
     public function listarUsuarios() {
         return parent::listar();
     }
 
+    /**
+     * Obtém um usuário específico pelo ID
+     * 
+     * @param int $id ID do usuário a ser obtido
+     * @return array Dados do usuário
+     */
     public function obterUsuarioPorId(int $id) {
         return parent::obterPorId($id);
     }
 
+    /**
+     * Insere um novo usuário no sistema
+     * 
+     * @param string $nome Nome do usuário
+     * @param string $email Email do usuário
+     * @param string $senha Senha do usuário (será criptografada)
+     * @param bool $admin Define se o usuário é administrador
+     * @return array Resultado da operação
+     */
     public function inserirUsuario(string $nome, string $email, string $senha, bool $admin) {
-        // Criptografa a senha antes de salvar
         $senhaCriptografada = password_hash($senha, PASSWORD_DEFAULT);
         return parent::inserir($nome, $email, $senhaCriptografada, $admin);
     }
 
+    /**
+     * Altera os dados de um usuário existente
+     * 
+     * @param int $id ID do usuário a ser alterado
+     * @param string $nome Novo nome do usuário
+     * @param string $email Novo email do usuário
+     * @param string $senha Nova senha do usuário (opcional)
+     * @param bool $admin Define se o usuário é administrador
+     * @return array|bool Resultado da operação
+     */
     public function alterarUsuario(int $id, string $nome, string $email, string $senha, bool $admin) {
-        // Se a senha foi fornecida, criptografa antes de salvar
         if (!empty($senha)) {
             $senhaCriptografada = password_hash($senha, PASSWORD_DEFAULT);
             return parent::alterar($id, $nome, $email, $senhaCriptografada, $admin);
         } else {
-            // Busca o usuário atual para manter a senha existente
             $usuario = $this->obterUsuarioPorId($id);
             if ($usuario && isset($usuario[0]['senha'])) {
                 return parent::alterar($id, $nome, $email, $usuario[0]['senha'], $admin);
@@ -33,6 +68,12 @@ class UsuarioService extends UsuarioDAO {
         }
     }
 
+    /**
+     * Exclui logicamente um usuário do sistema
+     * 
+     * @param int $id ID do usuário a ser excluído
+     * @return array Resultado da operação
+     */
     public function excluirUsuario(int $id) {
         return parent::excluir($id);
     }
@@ -51,20 +92,17 @@ class UsuarioService extends UsuarioDAO {
     /**
      * Autentica um usuário pelo e-mail e senha
      * 
-     * @param string $email O e-mail do usuário
-     * @param string $senha A senha do usuário
-     * @return array|bool Dados do usuário se autenticado com sucesso, False caso contrário
+     * @param string $email Email do usuário
+     * @param string $senha Senha do usuário (não criptografada)
+     * @return array|bool Dados do usuário se autenticado, ou false se falhou
      */
     public function autenticarUsuario(string $email, string $senha) {
         $usuario = $this->obterPorEmail($email);
         
-        if (empty($usuario)) {
-            return false;
-        }
-        
-        // Verifica se a senha fornecida corresponde à senha no banco de dados
-        if (password_verify($senha, $usuario[0]['senha'])) {
-            return $usuario[0];
+        if (!empty($usuario) && isset($usuario[0]['senha'])) {
+            if (password_verify($senha, $usuario[0]['senha'])) {
+                return $usuario[0];
+            }
         }
         
         return false;
@@ -91,7 +129,6 @@ class UsuarioService extends UsuarioDAO {
     public function emailExisteOutroUsuario(string $email, int $usuarioId) {
         $usuarios = parent::obterUsuarioPorEmail($email);
         
-        // Só retorna true se encontrou algum usuário com este email E o ID é diferente
         return !empty($usuarios) && $usuarios[0]['id'] != $usuarioId;
     }
 }

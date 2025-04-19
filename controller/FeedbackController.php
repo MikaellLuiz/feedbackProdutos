@@ -20,14 +20,15 @@ class FeedbackController {
         $this->template = new FeedbackTemplate();
     }
 
+    /**
+     * Lista todos os feedbacks agrupados por produto
+     * 
+     * @return void
+     */
     public function listar() {
-        // Obter todos os feedbacks
         $feedbacks = $this->feedbackService->listarFeedbacks();
-        
-        // Obter todos os produtos com suas informações
         $produtos = $this->produtoService->listarProdutos();
         
-        // Agrupar feedbacks por produto
         $feedbacksPorProduto = [];
         
         foreach ($produtos as $produto) {
@@ -43,15 +44,19 @@ class FeedbackController {
             }
         }
         
-        // Filtrar apenas produtos que têm feedbacks
         $feedbacksPorProduto = array_filter($feedbacksPorProduto, function($item) {
             return !empty($item['feedbacks']);
         });
         
-        // Enviar os dados para o template
         $this->template->layout('/feedback/listar.php', $feedbacksPorProduto);
     }
 
+    /**
+     * Cria um novo feedback para um produto
+     * Verifica se o usuário já avaliou o produto antes de permitir nova avaliação
+     * 
+     * @return void
+     */
     public function novo() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $produto_id = intval($_POST['produto_id'] ?? 0);
@@ -59,9 +64,7 @@ class FeedbackController {
             $nota = intval($_POST['nota'] ?? 0);
             $comentario = $_POST['comentario'] ?? '';
             
-            // Verifica se o usuário já avaliou este produto
             if ($this->feedbackService->usuarioJaAvaliouProduto($produto_id, $usuario_id)) {
-                // Redireciona com mensagem de erro
                 $_SESSION['erro_avaliacao'] = 'Você já avaliou este produto. Você pode editar sua avaliação existente na sua área do cliente.';
                 header('Location: /produto/detalhes?id=' . $produto_id);
                 exit;
@@ -69,44 +72,42 @@ class FeedbackController {
             
             $this->feedbackService->inserirFeedback($produto_id, $usuario_id, $nota, $comentario);
             
-            // Redireciona para os detalhes do produto após adicionar o feedback
             header('Location: /produto/detalhes?id=' . $produto_id);
             exit;
         }
         
-        // Preparamos os dados aqui
         global $produtos, $usuarios, $produtoSelecionado;
         $produtos = $this->produtoService->listarProdutos();
         $usuarios = $this->usuarioService->listarUsuarios();
         
-        // Verifica se foi passado um ID de produto pela URL
         $produtoSelecionado = 0;
         if (isset($_GET['produto_id'])) {
             $produtoSelecionado = intval($_GET['produto_id']);
         }
         
-        // Usamos o método layout do template
         $this->template->layout('/feedback/formulario.php');
     }
 
+    /**
+     * Edita um feedback existente
+     * Verifica permissões do usuário antes de permitir a edição
+     * 
+     * @return void
+     */
     public function editar() {
-        // Inicializa a sessão se ainda não estiver iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         
         $id = $_GET['id'] ?? 0;
         
-        // Obtém o feedback para verificar permissões
         $feedback = $this->feedbackService->obterFeedbackPorId($id);
         
-        // Verifica se o feedback existe
         if (empty($feedback)) {
             header('Location: /feedback/listar');
             exit;
         }
         
-        // Verifica se o usuário está logado
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
             header('Location: /usuario/login');
             exit;
@@ -115,8 +116,6 @@ class FeedbackController {
         $usuarioId = $_SESSION['usuario_id'];
         $isAdmin = isset($_SESSION['admin']) && $_SESSION['admin'] == 1;
         
-        // Verifica se o usuário tem permissão para editar este feedback
-        // (precisa ser o autor do feedback ou um administrador)
         if (!$isAdmin && $feedback[0]['usuario_id'] != $usuarioId) {
             header('Location: /feedback/listar');
             exit;
@@ -133,11 +132,9 @@ class FeedbackController {
             exit;
         }
         
-        // Obtém os dados necessários para o formulário
         $produtos = $this->produtoService->listarProdutos();
         $usuarios = $this->usuarioService->listarUsuarios();
         
-        // Prepara os dados para o template
         $dados = [
             'feedback' => $feedback[0],
             'produtos' => $produtos,
@@ -147,24 +144,26 @@ class FeedbackController {
         $this->template->layout('/feedback/formulario.php', $dados);
     }
 
+    /**
+     * Exclui um feedback existente
+     * Verifica permissões do usuário antes de permitir a exclusão
+     * 
+     * @return void
+     */
     public function excluir() {
-        // Inicializa a sessão se ainda não estiver iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         
         $id = $_GET['id'] ?? 0;
         
-        // Verifica se o usuário está logado
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
             header('Location: /usuario/login');
             exit;
         }
         
-        // Obtém o feedback para verificar permissões
         $feedback = $this->feedbackService->obterFeedbackPorId($id);
         
-        // Verifica se o feedback existe
         if (empty($feedback)) {
             header('Location: /feedback/listar');
             exit;
@@ -173,8 +172,6 @@ class FeedbackController {
         $usuarioId = $_SESSION['usuario_id'];
         $isAdmin = isset($_SESSION['admin']) && $_SESSION['admin'] == 1;
         
-        // Verifica se o usuário tem permissão para excluir este feedback
-        // (precisa ser o autor do feedback ou um administrador)
         if (!$isAdmin && $feedback[0]['usuario_id'] != $usuarioId) {
             header('Location: /feedback/listar');
             exit;
@@ -191,44 +188,39 @@ class FeedbackController {
     /**
      * Adiciona uma avaliação via AJAX
      * Retorna um JSON com o status da operação
+     * 
+     * @return void
      */
     public function adicionar_ajax() {
-        // Verifica se a requisição é POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->retornarJsonErro('Método não permitido');
             return;
         }
         
-        // Verifica se o usuário está logado
         session_start();
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
             $this->retornarJsonErro('Usuário não autenticado');
             return;
         }
         
-        // Coleta os dados do formulário
         $produto_id = intval($_POST['produto_id'] ?? 0);
         $usuario_id = intval($_POST['usuario_id'] ?? 0);
         $nota = intval($_POST['nota'] ?? 0);
         $comentario = $_POST['comentario'] ?? '';
         
-        // Valida os dados
         if ($produto_id <= 0 || $usuario_id <= 0 || $nota < 1 || $nota > 5 || empty($comentario)) {
             $this->retornarJsonErro('Dados inválidos para avaliação');
             return;
         }
         
-        // Verifica se o usuário já avaliou este produto
         if ($this->feedbackService->usuarioJaAvaliouProduto($produto_id, $usuario_id)) {
             $this->retornarJsonErro('Você já avaliou este produto. Você pode editar sua avaliação existente na sua área do cliente.');
             return;
         }
         
-        // Insere o feedback
         try {
             $this->feedbackService->inserirFeedback($produto_id, $usuario_id, $nota, $comentario);
             
-            // Retorna sucesso
             $this->retornarJsonSucesso('Avaliação enviada com sucesso!');
         } catch (\Exception $e) {
             $this->retornarJsonErro('Erro ao salvar avaliação: ' . $e->getMessage());
@@ -238,51 +230,45 @@ class FeedbackController {
     /**
      * Edita uma avaliação via AJAX
      * Retorna um JSON com o status da operação
+     * 
+     * @return void
      */
     public function editar_ajax() {
-        // Verifica se a requisição é POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->retornarJsonErro('Método não permitido');
             return;
         }
         
-        // Verifica se o usuário está logado
         session_start();
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
             $this->retornarJsonErro('Usuário não autenticado');
             return;
         }
         
-        // Coleta os dados do formulário
         $id = intval($_POST['id'] ?? 0);
         $produto_id = intval($_POST['produto_id'] ?? 0);
         $usuario_id = intval($_POST['usuario_id'] ?? 0);
         $nota = intval($_POST['nota'] ?? 0);
         $comentario = $_POST['comentario'] ?? '';
         
-        // Verifica se o usuário é o dono da avaliação
         $feedback = $this->feedbackService->obterFeedbackPorId($id);
         if (empty($feedback) || $feedback[0]['usuario_id'] != $usuario_id) {
             $this->retornarJsonErro('Você não tem permissão para editar esta avaliação');
             return;
         }
         
-        // Valida os dados
         if ($id <= 0 || $nota < 1 || $nota > 5 || empty($comentario)) {
             $this->retornarJsonErro('Dados inválidos para avaliação');
             return;
         }
         
-        // Usa o produto_id do feedback existente se não foi fornecido
         if ($produto_id <= 0) {
             $produto_id = $feedback[0]['produto_id'];
         }
         
-        // Atualiza o feedback
         try {
             $this->feedbackService->alterarFeedback($id, $produto_id, $usuario_id, $nota, $comentario);
             
-            // Retorna sucesso
             $this->retornarJsonSucesso('Avaliação atualizada com sucesso!');
         } catch (\Exception $e) {
             $this->retornarJsonErro('Erro ao atualizar avaliação: ' . $e->getMessage());
@@ -292,22 +278,21 @@ class FeedbackController {
     /**
      * Exclui uma avaliação via AJAX
      * Retorna um JSON com o status da operação
+     * 
+     * @return void
      */
     public function excluir_ajax() {
-        // Verifica se a requisição é POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->retornarJsonErro('Método não permitido');
             return;
         }
         
-        // Verifica se o usuário está logado
         session_start();
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
             $this->retornarJsonErro('Usuário não autenticado');
             return;
         }
         
-        // Obtém o ID da avaliação
         $id = intval($_GET['id'] ?? 0);
         $usuario_id = $_SESSION['usuario_id'];
         
@@ -316,18 +301,15 @@ class FeedbackController {
             return;
         }
         
-        // Verifica se o usuário é o dono da avaliação
         $feedback = $this->feedbackService->obterFeedbackPorId($id);
         if (empty($feedback) || $feedback[0]['usuario_id'] != $usuario_id) {
             $this->retornarJsonErro('Você não tem permissão para excluir esta avaliação');
             return;
         }
         
-        // Exclui o feedback
         try {
             $this->feedbackService->excluirFeedback($id);
             
-            // Retorna sucesso
             $this->retornarJsonSucesso('Avaliação excluída com sucesso!');
         } catch (\Exception $e) {
             $this->retornarJsonErro('Erro ao excluir avaliação: ' . $e->getMessage());
@@ -336,6 +318,10 @@ class FeedbackController {
     
     /**
      * Retorna uma resposta JSON de sucesso
+     * 
+     * @param string $mensagem Mensagem de sucesso
+     * @param array $dados Dados adicionais a serem retornados
+     * @return void
      */
     private function retornarJsonSucesso($mensagem = '', $dados = []) {
         $resposta = [
@@ -352,6 +338,10 @@ class FeedbackController {
     
     /**
      * Retorna uma resposta JSON de erro
+     * 
+     * @param string $mensagem Mensagem de erro
+     * @param int $codigo Código HTTP de erro
+     * @return void
      */
     private function retornarJsonErro($mensagem = '', $codigo = 400) {
         http_response_code($codigo);
@@ -366,6 +356,9 @@ class FeedbackController {
     
     /**
      * Envia uma resposta JSON
+     * 
+     * @param array $dados Dados a serem convertidos para JSON
+     * @return void
      */
     private function enviarJsonResponse($dados) {
         header('Content-Type: application/json');

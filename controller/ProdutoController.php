@@ -17,13 +17,23 @@ class ProdutoController {
         $this->template = new ProdutoTemplate();
     }
 
+    /**
+     * Lista todos os produtos cadastrados no sistema
+     * 
+     * @return void
+     */
     public function listar() {
         $produtos = $this->produtoService->listarProdutos();
         $this->template->layout('/produto/listar.php', $produtos);
     }
 
+    /**
+     * Exibe o formulário para criação de um novo produto e processa o envio do formulário
+     * Requer que o usuário seja administrador
+     * 
+     * @return void
+     */
     public function novo() {
-        // Verifica se o usuário está logado e é administrador
         session_start();
         if (!isset($_SESSION['logado']) || !isset($_SESSION['admin']) || $_SESSION['admin'] != 1) {
             header('Location: /produto/listar');
@@ -35,7 +45,6 @@ class ProdutoController {
             $descricao = $_POST['descricao'] ?? '';
             $preco = floatval($_POST['preco'] ?? 0);
             
-            // Processa o upload da imagem
             $imagemPath = $this->processarUploadImagem();
             
             $this->produtoService->inserirProduto($nome, $descricao, $preco, $imagemPath);
@@ -46,8 +55,13 @@ class ProdutoController {
         $this->template->layout('/produto/formulario.php');
     }
 
+    /**
+     * Exibe o formulário para edição de um produto existente e processa o envio do formulário
+     * Requer que o usuário seja administrador
+     * 
+     * @return void
+     */
     public function editar() {
-        // Verifica se o usuário está logado e é administrador
         session_start();
         if (!isset($_SESSION['logado']) || !isset($_SESSION['admin']) || $_SESSION['admin'] != 1) {
             header('Location: /produto/listar');
@@ -61,11 +75,9 @@ class ProdutoController {
             $descricao = $_POST['descricao'] ?? '';
             $preco = floatval($_POST['preco'] ?? 0);
             
-            // Se foi enviada uma nova imagem, processa o upload
             if (isset($_FILES['imagem']) && $_FILES['imagem']['size'] > 0) {
                 $imagemPath = $this->processarUploadImagem();
             } else {
-                // Caso contrário, mantém a imagem atual
                 $imagemPath = $_POST['imagem_atual'] ?? '';
             }
             
@@ -78,8 +90,13 @@ class ProdutoController {
         $this->template->layout('/produto/formulario.php', $produto);
     }
 
+    /**
+     * Exclui um produto pelo ID
+     * Requer que o usuário seja administrador
+     * 
+     * @return void
+     */
     public function excluir() {
-        // Verifica se o usuário está logado e é administrador
         session_start();
         if (!isset($_SESSION['logado']) || !isset($_SESSION['admin']) || $_SESSION['admin'] != 1) {
             header('Location: /produto/listar');
@@ -98,6 +115,9 @@ class ProdutoController {
     
     /**
      * Exibe os detalhes de um produto específico com suas avaliações
+     * Calcula a nota média das avaliações e exibe os feedbacks do produto
+     * 
+     * @return void
      */
     public function detalhes() {
         $id = $_GET['id'] ?? 0;
@@ -107,7 +127,6 @@ class ProdutoController {
             exit;
         }
         
-        // Obtém os detalhes do produto
         $produto = $this->produtoService->obterProdutoPorId($id);
         
         if (empty($produto)) {
@@ -115,10 +134,8 @@ class ProdutoController {
             exit;
         }
         
-        // Obtém os feedbacks do produto
         $feedbacks = $this->produtoService->obterFeedbacksDoProduto($id);
         
-        // Calcula a nota média
         $notaMedia = 0;
         $totalAvaliacoes = count($feedbacks);
         
@@ -130,7 +147,6 @@ class ProdutoController {
             $notaMedia = $somaNotas / $totalAvaliacoes;
         }
         
-        // Passa os dados para a view
         $dados = [
             'produto' => $produto[0],
             'feedbacks' => $feedbacks,
@@ -143,6 +159,7 @@ class ProdutoController {
     
     /**
      * Processa o upload da imagem do produto
+     * Gera um nome único para a imagem e a salva no diretório de imagens
      *
      * @return string Caminho da imagem salva
      */
@@ -150,19 +167,15 @@ class ProdutoController {
         $imagemPath = '';
         
         if (isset($_FILES['imagem']) && $_FILES['imagem']['error'] == 0) {
-            // Diretório para salvar as imagens
             $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/public/img/produtos/';
             
-            // Garante que o diretório existe
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
             
-            // Gera um nome único para a imagem
             $fileName = 'produto_' . uniqid() . '.png';
             $uploadFile = $uploadDir . $fileName;
             
-            // Move o arquivo para o diretório de destino
             if (move_uploaded_file($_FILES['imagem']['tmp_name'], $uploadFile)) {
                 $imagemPath = '/public/img/produtos/' . $fileName;
             }

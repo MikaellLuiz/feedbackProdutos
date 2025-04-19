@@ -2,8 +2,23 @@
 
 namespace CasasLuiza\generic;
 
+/**
+ * Classe Controller
+ * 
+ * Implementa o sistema de roteamento principal da aplicação
+ * Mapeia as rotas para as ações correspondentes nos controladores
+ */
 class Controller{
+    /**
+     * @var array Mapeamento das rotas para as respectivas ações
+     */
     private $arrChamadas=[];
+    
+    /**
+     * Construtor da classe Controller
+     * 
+     * Inicializa o mapeamento de rotas da aplicação
+     */
     public function __construct()
     {
         $this->arrChamadas = [
@@ -47,6 +62,12 @@ class Controller{
         ];
     }
 
+    /**
+     * Verifica e executa a ação correspondente à rota solicitada
+     * 
+     * @param string $rota A rota solicitada pelo usuário
+     * @return void
+     */
     public function verificarChamadas($rota){
        
         if(isset($this->arrChamadas[$rota])){

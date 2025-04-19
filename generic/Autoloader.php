@@ -1,13 +1,19 @@
 <?php
+/**
+ * Autoloader
+ * 
+ * Configuração do autoload para carregar classes automaticamente
+ * utilizando PSR-4 para o namespace CasasLuiza
+ * 
+ * @package CasasLuiza
+ */
 
 spl_autoload_register(function(string $className){
     $namespace = "CasasLuiza\\";
     
     if (strpos($className, $namespace) === 0) {
-        // Remove o namespace base
         $relativeClass = substr($className, strlen($namespace));
         
-        // Converte barras de namespace para separadores de diretório
         $file = __DIR__ . '/../' . str_replace('\\', DIRECTORY_SEPARATOR, $relativeClass) . '.php';
         
         if (file_exists($file)) {
