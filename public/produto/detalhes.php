@@ -43,7 +43,8 @@ $usuarioNome = $logado ? $_SESSION['usuario_nome'] : '';
 
             <div class="produto-detalhes-precos">
                 <div class="produto-preco-original grande">
-                    <span>R$ <?= number_format($produto['preco'] * 1.1, 2, ',', '.') ?> em 10x de R$ <?= number_format(($produto['preco'] * 1.1) / 10, 2, ',', '.') ?> sem juros</span>
+                    <span class="preco-valor-original">R$ <?= number_format($produto['preco'] * 1.1, 2, ',', '.') ?></span>
+                    <span class="preco-parcelamento">em 10x de R$ <?= number_format(($produto['preco'] * 1.1) / 10, 2, ',', '.') ?> sem juros</span>
                 </div>
                 <div class="produto-preco-atual grande">
                     <span class="preco-valor">R$ <?= number_format($produto['preco'], 2, ',', '.') ?></span>
