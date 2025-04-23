@@ -1,3 +1,13 @@
+<?php
+// Inicializa a sessão se ainda não estiver iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Define a base URL para uso no XAMPP
+$baseUrl = "/feedbackProdutos";
+?>
+
 <h2>Avaliações por Produto</h2>
 
 <?php if(empty($parametro)): ?>
@@ -11,7 +21,7 @@
             <div class="produto-feedback-section">
                 <div class="produto-feedback-header">
                     <h3 class="produto-nome">
-                        <a href="/produto/detalhes?id=<?= $produtoId ?>">
+                        <a href="<?= $baseUrl ?>/produto/detalhes?id=<?= $produtoId ?>">
                             <?= $item['produto']['nome'] ?>
                         </a>
                     </h3>
@@ -76,11 +86,11 @@
                             ?>
                                 <div class="feedback-acoes">
                                     <?php if($isAdmin): ?>
-                                        <a href="/feedback/excluir?id=<?= $feedback['id'] ?>" class="btn-excluir" onclick="return confirm('Tem certeza que deseja excluir esta avaliação?')">Excluir</a>
+                                        <a href="<?= $baseUrl ?>/feedback/excluir?id=<?= $feedback['id'] ?>" class="btn-excluir" onclick="return confirm('Tem certeza que deseja excluir esta avaliação?')">Excluir</a>
                                     <?php endif; ?>
                                     
                                     <?php if($logado && $usuarioAtual == $feedback['usuario_id']): ?>
-                                        <a href="/usuario/perfil" class="btn-editar">Gerenciar minhas avaliações</a>
+                                        <a href="<?= $baseUrl ?>/usuario/perfil" class="btn-editar">Gerenciar minhas avaliações</a>
                                     <?php endif; ?>
                                 </div>
                             <?php endif; ?>
@@ -89,7 +99,7 @@
                 </div>
                 
                 <div class="produto-feedback-footer">
-                    <a href="/produto/detalhes?id=<?= $produtoId ?>" class="btn-ver-produto">Ver detalhes do produto</a>
+                    <a href="<?= $baseUrl ?>/produto/detalhes?id=<?= $produtoId ?>" class="btn-ver-produto">Ver detalhes do produto</a>
                 </div>
             </div>
         <?php endforeach; ?>

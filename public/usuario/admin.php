@@ -9,9 +9,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Define a base URL para uso no XAMPP
+$baseUrl = "/feedbackProdutos";
+
 // Verifica se é um administrador
 if (!isset($_SESSION['admin']) || $_SESSION['admin'] != 1) {
-    header('Location: /');
+    header("Location: {$baseUrl}/");
     exit;
 }
 
@@ -53,7 +56,7 @@ $usuarioEmail = $_SESSION['usuario_email'] ?? '';
                             </td>
                             <td class="text-center">
                                 <?php if ($user['id'] != $usuarioId): ?>
-                                    <a href="/usuario/excluir?id=<?= $user['id'] ?>" class="btn-excluir-usuario" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">Excluir</a>
+                                    <a href="<?= $baseUrl ?>/usuario/excluir?id=<?= $user['id'] ?>" class="btn-excluir-usuario" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">Excluir</a>
                                 <?php else: ?>
                                     <span class="usuario-atual">(Você)</span>
                                 <?php endif; ?>
@@ -71,7 +74,7 @@ $usuarioEmail = $_SESSION['usuario_email'] ?? '';
         
         <!-- Adicione um link para ver todas as avaliações -->
         <div class="admin-actions">
-            <a href="/feedback/listar" class="btn-admin">Ver todas as avaliações</a>
+            <a href="<?= $baseUrl ?>/feedback/listar" class="btn-admin">Ver todas as avaliações</a>
         </div>
         
         <!-- Aqui você pode adicionar métricas ou resumos de avaliações se desejar -->
@@ -82,8 +85,8 @@ $usuarioEmail = $_SESSION['usuario_email'] ?? '';
         <h2>Gerenciamento de Produtos</h2>
         
         <div class="admin-actions">
-            <a href="/produto/listar" class="btn-admin">Ver todos os produtos</a>
-            <a href="/produto/novo" class="btn-admin">Adicionar novo produto</a>
+            <a href="<?= $baseUrl ?>/produto/listar" class="btn-admin">Ver todos os produtos</a>
+            <a href="<?= $baseUrl ?>/produto/novo" class="btn-admin">Adicionar novo produto</a>
         </div>
     </div>
 </div>

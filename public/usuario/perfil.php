@@ -8,6 +8,15 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Define a base URL para uso no XAMPP
+$baseUrl = "/feedbackProdutos";
+
+// Verifica se o usuário está logado
+if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
+    header("Location: {$baseUrl}/usuario/login");
+    exit;
+}
+
 $usuarioId = $_SESSION['usuario_id'] ?? 0;
 $usuarioNome = $_SESSION['usuario_nome'] ?? '';
 $usuarioEmail = $_SESSION['usuario_email'] ?? '';
@@ -45,7 +54,7 @@ $usuarioEmail = $_SESSION['usuario_email'] ?? '';
             <?php if(empty($avaliacoes)): ?>
                 <div class="sem-avaliacoes">
                     <p>Você ainda não avaliou nenhum produto.</p>
-                    <a href="/produto/listar" class="btn-ver-produtos">Ver produtos para avaliar</a>
+                    <a href="<?= $baseUrl ?>/produto/listar" class="btn-ver-produtos">Ver produtos para avaliar</a>
                 </div>
             <?php else: ?>
                 <div class="avaliacoes-lista">
@@ -87,7 +96,7 @@ $usuarioEmail = $_SESSION['usuario_email'] ?? '';
         <span class="fechar-modal" onclick="fecharModal('modal-editar-avaliacao')">&times;</span>
         <h2>Editar Avaliação</h2>
         
-        <form id="form-editar-avaliacao" method="POST" action="/feedback/adicionar_ajax">
+        <form id="form-editar-avaliacao" method="POST" action="<?= $baseUrl ?>/feedback/editar_ajax">
             <input type="hidden" id="avaliacao_id" name="id" value="">
             <input type="hidden" name="produto_id" value="">
             <input type="hidden" name="usuario_id" value="<?= $usuarioId ?>">
@@ -120,7 +129,7 @@ $usuarioEmail = $_SESSION['usuario_email'] ?? '';
         <span class="fechar-modal" onclick="fecharModal('modal-editar-info')">&times;</span>
         <h2>Editar Informações</h2>
         
-        <form id="form-editar-info" method="POST" action="/usuario/editar_ajax">
+        <form id="form-editar-info" method="POST" action="<?= $baseUrl ?>/usuario/editar_ajax">
             <input type="hidden" name="id" value="<?= $usuarioId ?>">
             
             <div class="form-group">
@@ -146,7 +155,7 @@ $usuarioEmail = $_SESSION['usuario_email'] ?? '';
         <span class="fechar-modal" onclick="fecharModal('modal-senha')">&times;</span>
         <h2>Alterar Senha</h2>
         
-        <form id="form-alterar-senha" method="POST" action="/usuario/alterar_senha_ajax">
+        <form id="form-alterar-senha" method="POST" action="<?= $baseUrl ?>/usuario/alterar_senha_ajax">
             <input type="hidden" name="id" value="<?= $usuarioId ?>">
             
             <div class="form-group">
@@ -214,7 +223,7 @@ function editarAvaliacao(id, nota, comentario) {
 function confirmarExclusao(id) {
     if (confirm('Tem certeza que deseja excluir esta avaliação?')) {
         // Enviar solicitação para excluir a avaliação
-        fetch(`/feedback/excluir_ajax?id=${id}`, {
+        fetch(`<?= $baseUrl ?>/feedback/excluir_ajax?id=${id}`, {
             method: 'POST',
         })
         .then(response => response.json())
@@ -236,7 +245,7 @@ function confirmarExclusao(id) {
 function confirmarExclusaoConta() {
     if (confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')) {
         if (confirm('Todos os seus dados e avaliações serão removidos permanentemente. Deseja continuar?')) {
-            window.location.href = "/usuario/excluir?id=<?= $usuarioId ?>";
+            window.location.href = "<?= $baseUrl ?>/usuario/excluir?id=<?= $usuarioId ?>";
         }
     }
 }
@@ -258,7 +267,7 @@ document.getElementById('form-editar-avaliacao').addEventListener('submit', func
     
     const formData = new FormData(this);
     
-    fetch('/feedback/editar_ajax', {
+    fetch('<?= $baseUrl ?>/feedback/editar_ajax', {
         method: 'POST',
         body: formData
     })
@@ -283,7 +292,7 @@ document.getElementById('form-editar-info').addEventListener('submit', function(
     
     const formData = new FormData(this);
     
-    fetch('/usuario/editar_ajax', {
+    fetch('<?= $baseUrl ?>/usuario/editar_ajax', {
         method: 'POST',
         body: formData
     })
@@ -316,7 +325,7 @@ document.getElementById('form-alterar-senha').addEventListener('submit', functio
     
     const formData = new FormData(this);
     
-    fetch('/usuario/alterar_senha_ajax', {
+    fetch('<?= $baseUrl ?>/usuario/alterar_senha_ajax', {
         method: 'POST',
         body: formData
     })

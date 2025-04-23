@@ -6,6 +6,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Verifica se o usuário é administrador
 $isAdmin = isset($_SESSION['logado']) && $_SESSION['logado'] === true && isset($_SESSION['admin']) && $_SESSION['admin'] == 1;
+
+// Define a base URL para uso no XAMPP
+$baseUrl = "/feedbackProdutos";
 ?>
 
 <div class="container-titulo">
@@ -13,7 +16,7 @@ $isAdmin = isset($_SESSION['logado']) && $_SESSION['logado'] === true && isset($
 
     <?php if($isAdmin): ?>
     <div class="nova-produto-container">
-        <a href="/produto/novo" class="btn-novo-produto">Novo Produto</a>
+        <a href="<?= $baseUrl ?>/produto/novo" class="btn-novo-produto">Novo Produto</a>
     </div>
     <?php endif; ?>
 </div>
@@ -24,7 +27,7 @@ $isAdmin = isset($_SESSION['logado']) && $_SESSION['logado'] === true && isset($
     <?php else: ?>
         <?php foreach($parametro as $produto): ?>
             <div class="produto-card">
-                <a href="/produto/detalhes?id=<?= $produto['id'] ?>" class="produto-card-content">
+                <a href="<?= $baseUrl ?>/produto/detalhes?id=<?= $produto['id'] ?>" class="produto-card-content">
                     <div class="produto-imagem-container">
                         <?php if(!empty($produto['imagem'])): ?>
                             <img src="<?= $produto['imagem'] ?>" alt="<?= $produto['nome'] ?>" class="produto-imagem">
@@ -53,8 +56,8 @@ $isAdmin = isset($_SESSION['logado']) && $_SESSION['logado'] === true && isset($
                 
                 <?php if($isAdmin): ?>
                 <div class="produto-acoes">
-                    <a href="/produto/editar?id=<?= $produto['id'] ?>" class="btn-editar">Editar</a>
-                    <a href="/produto/excluir?id=<?= $produto['id'] ?>" class="btn-excluir" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
+                    <a href="<?= $baseUrl ?>/produto/editar?id=<?= $produto['id'] ?>" class="btn-editar">Editar</a>
+                    <a href="<?= $baseUrl ?>/produto/excluir?id=<?= $produto['id'] ?>" class="btn-excluir" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
                 </div>
                 <?php endif; ?>
             </div>

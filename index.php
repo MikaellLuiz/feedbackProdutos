@@ -18,6 +18,15 @@ use CasasLuiza\generic\DotEnv;
 $requestUri = $_SERVER['REQUEST_URI'];
 $baseDir = dirname($_SERVER['SCRIPT_NAME']);
 
+// Definir o diretório base para o projeto (ajuste para XAMPP)
+$appBaseDir = '/feedbackProdutos';
+
+// Remover o diretório base do projeto da URI
+if (strpos($requestUri, $appBaseDir) === 0) {
+    $requestUri = substr($requestUri, strlen($appBaseDir));
+}
+
+// Compatibilidade com instalação antiga
 if ($baseDir !== '/' && strpos($requestUri, $baseDir) === 0) {
     $requestUri = substr($requestUri, strlen($baseDir));
 }

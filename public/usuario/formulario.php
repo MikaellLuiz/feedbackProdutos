@@ -1,7 +1,12 @@
+<?php
+// Define a base URL para uso no XAMPP
+$baseUrl = "/feedbackProdutos";
+?>
+
 <div class="form-container" style="max-width: 500px; margin: 0 auto; padding: 20px;">
     <h1 class="page-title">Quero criar uma conta</h1>
     
-    <form method="POST" action="<?= ($parametro != null) ? '/usuario/editar?id=' . $parametro[0]['id'] : '/usuario/novo' ?>">
+    <form method="POST" action="<?= $baseUrl ?><?= ($parametro != null) ? '/usuario/editar?id=' . $parametro[0]['id'] : '/usuario/novo' ?>">
         <div class="form-group">
             <label for="nome">Nome</label>
             <input type="text" id="nome" name="nome" class="form-control" placeholder="Digite seu Nome" value="<?= ($parametro != null) ? $parametro[0]['nome'] : '' ?>" required>

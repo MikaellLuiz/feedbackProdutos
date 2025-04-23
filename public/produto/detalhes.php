@@ -13,6 +13,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Define a base URL para uso no XAMPP
+$baseUrl = "/feedbackProdutos";
+
 // Verifica se o usuário está logado
 $logado = isset($_SESSION['logado']) && $_SESSION['logado'] === true;
 $usuarioId = $logado ? $_SESSION['usuario_id'] : 0;
@@ -72,14 +75,14 @@ $usuarioNome = $logado ? $_SESSION['usuario_nome'] : '';
                     $jaAvaliou = (new \CasasLuiza\service\FeedbackService())->usuarioJaAvaliouProduto($produto['id'], $usuarioId);
                     if($jaAvaliou): 
                     ?>
-                        <a href="/usuario/perfil" class="btn-adicionar-avaliacao">Ver Sua Avaliação</a>
+                        <a href="<?= $baseUrl ?>/usuario/perfil" class="btn-adicionar-avaliacao">Ver Sua Avaliação</a>
                     <?php else: ?>
                         <button class="btn-adicionar-avaliacao" onclick="abrirModal()">Avaliar Produto</button>
                     <?php endif; ?>
                 <?php else: ?>
-                    <a href="/usuario/login" class="btn-adicionar-avaliacao">Faça login para avaliar</a>
+                    <a href="<?= $baseUrl ?>/usuario/login" class="btn-adicionar-avaliacao">Faça login para avaliar</a>
                 <?php endif; ?>
-                <a href="/produto/listar" class="btn-voltar">Voltar para Lista</a>
+                <a href="<?= $baseUrl ?>/produto/listar" class="btn-voltar">Voltar para Lista</a>
             </div>
         </div>
     </div>
@@ -120,7 +123,7 @@ $usuarioNome = $logado ? $_SESSION['usuario_nome'] : '';
         <span class="fechar-modal" onclick="fecharModal()">&times;</span>
         <h2>Avaliar <?= $produto['nome'] ?></h2>
         
-        <form id="form-avaliacao" method="POST" action="/feedback/adicionar_ajax">
+        <form id="form-avaliacao" method="POST" action="<?= $baseUrl ?>/feedback/adicionar_ajax">
             <input type="hidden" name="produto_id" value="<?= $produto['id'] ?>">
             <input type="hidden" name="usuario_id" value="<?= $usuarioId ?>">
             
@@ -178,7 +181,7 @@ document.getElementById('form-avaliacao').addEventListener('submit', function(e)
     
     const formData = new FormData(this);
     
-    fetch('/feedback/adicionar_ajax', {
+    fetch('<?= $baseUrl ?>/feedback/adicionar_ajax', {
         method: 'POST',
         body: formData
     })

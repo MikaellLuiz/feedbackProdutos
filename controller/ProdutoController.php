@@ -10,11 +10,19 @@ class ProdutoController {
     private $produtoService;
     private $feedbackService;
     private $template;
+    private $baseUrl;
 
     public function __construct() {
         $this->produtoService = new ProdutoService();
         $this->feedbackService = new FeedbackService();
         $this->template = new ProdutoTemplate();
+        $this->baseUrl = "/feedbackProdutos"; // Base URL para uso no XAMPP
+    }
+
+    // Método auxiliar para redirecionamento
+    private function redirect($path) {
+        header("Location: {$this->baseUrl}{$path}");
+        exit;
     }
 
     /**
@@ -36,8 +44,7 @@ class ProdutoController {
     public function novo() {
         session_start();
         if (!isset($_SESSION['logado']) || !isset($_SESSION['admin']) || $_SESSION['admin'] != 1) {
-            header('Location: /produto/listar');
-            exit;
+            $this->redirect('/produto/listar');
         }
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -48,8 +55,7 @@ class ProdutoController {
             $imagemPath = $this->processarUploadImagem();
             
             $this->produtoService->inserirProduto($nome, $descricao, $preco, $imagemPath);
-            header('Location: /produto/listar');
-            exit;
+            $this->redirect('/produto/listar');
         }
         
         $this->template->layout('/produto/formulario.php');
@@ -64,8 +70,7 @@ class ProdutoController {
     public function editar() {
         session_start();
         if (!isset($_SESSION['logado']) || !isset($_SESSION['admin']) || $_SESSION['admin'] != 1) {
-            header('Location: /produto/listar');
-            exit;
+            $this->redirect('/produto/listar');
         }
         
         $id = $_GET['id'] ?? 0;
@@ -82,8 +87,7 @@ class ProdutoController {
             }
             
             $this->produtoService->alterarProduto($id, $nome, $descricao, $preco, $imagemPath);
-            header('Location: /produto/listar');
-            exit;
+            $this->redirect('/produto/listar');
         }
         
         $produto = $this->produtoService->obterProdutoPorId($id);
@@ -99,8 +103,7 @@ class ProdutoController {
     public function excluir() {
         session_start();
         if (!isset($_SESSION['logado']) || !isset($_SESSION['admin']) || $_SESSION['admin'] != 1) {
-            header('Location: /produto/listar');
-            exit;
+            $this->redirect('/produto/listar');
         }
         
         $id = $_GET['id'] ?? 0;
@@ -109,8 +112,7 @@ class ProdutoController {
             $this->produtoService->excluirProduto($id);
         }
         
-        header('Location: /produto/listar');
-        exit;
+        $this->redirect('/produto/listar');
     }
     
     /**
@@ -123,15 +125,13 @@ class ProdutoController {
         $id = $_GET['id'] ?? 0;
         
         if ($id <= 0) {
-            header('Location: /produto/listar');
-            exit;
+            $this->redirect('/produto/listar');
         }
         
         $produto = $this->produtoService->obterProdutoPorId($id);
         
         if (empty($produto)) {
-            header('Location: /produto/listar');
-            exit;
+            $this->redirect('/produto/listar');
         }
         
         $feedbacks = $this->produtoService->obterFeedbacksDoProduto($id);
@@ -167,7 +167,8 @@ class ProdutoController {
         $imagemPath = '';
         
         if (isset($_FILES['imagem']) && $_FILES['imagem']['error'] == 0) {
-            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/public/img/produtos/';
+            // Ajustando o caminho para funcionar com XAMPP
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/feedbackProdutos/public/img/produtos/';
             
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
@@ -177,7 +178,8 @@ class ProdutoController {
             $uploadFile = $uploadDir . $fileName;
             
             if (move_uploaded_file($_FILES['imagem']['tmp_name'], $uploadFile)) {
-                $imagemPath = '/public/img/produtos/' . $fileName;
+                // Caminho a ser salvo no banco de dados - ajustado para XAMPP
+                $imagemPath = '/feedbackProdutos/public/img/produtos/' . $fileName;
             }
         }
         

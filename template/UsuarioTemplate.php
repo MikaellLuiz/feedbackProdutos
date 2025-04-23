@@ -28,6 +28,9 @@ class UsuarioTemplate implements ITemplate {
      * {@inheritdoc}
      */
     public function layout($caminho, $parametro = null) {
+        // Define a base URL para o XAMPP
+        global $baseUrl;
+        
         $this->cabecalho();
         include dirname(dirname(__FILE__)) . "/public" . $caminho;
         $this->rodape();

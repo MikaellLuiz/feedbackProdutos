@@ -1,38 +1,46 @@
-<div class="container-form">
-    <h1 class="page-title">Adicionar / Editar Produto</h1>
+<?php
+// Define a base URL para uso no XAMPP
+$baseUrl = "/feedbackProdutos";
 
-    <form method="POST" action="<?= ($parametro != null) ? '/produto/editar?id=' . $parametro[0]['id'] : '/produto/novo' ?>" enctype="multipart/form-data">
+$titulo = empty($parametro) ? 'Novo Produto' : 'Editar Produto';
+$produto = empty($parametro) ? null : $parametro[0];
+?>
+
+<h2><?= $titulo ?></h2>
+
+<div class="container-form">
+    <form method="POST" action="<?= $baseUrl ?><?= empty($produto) ? '/produto/novo' : '/produto/editar?id=' . $produto['id'] ?>" enctype="multipart/form-data">
         <div class="form-group">
-            <input type="text" name="nome" class="form-control" placeholder="Nome" value="<?= ($parametro != null) ? $parametro[0]['nome'] : '' ?>" required>
+            <label for="nome">Nome do Produto:</label>
+            <input type="text" id="nome" name="nome" class="form-control" value="<?= empty($produto) ? '' : $produto['nome'] ?>" required>
         </div>
         
         <div class="form-group">
-            <input type="text" name="descricao" class="form-control" placeholder="Descrição" value="<?= ($parametro != null) ? $parametro[0]['descricao'] : '' ?>" required>
+            <label for="descricao">Descrição:</label>
+            <textarea id="descricao" name="descricao" class="form-control" rows="4" required><?= empty($produto) ? '' : $produto['descricao'] ?></textarea>
         </div>
         
         <div class="form-group">
-            <input type="number" name="preco" class="form-control" placeholder="Preço" step="0.01" min="0" value="<?= ($parametro != null) ? $parametro[0]['preco'] : '' ?>" required>
+            <label for="preco">Preço (R$):</label>
+            <input type="number" id="preco" name="preco" class="form-control" step="0.01" min="0" value="<?= empty($produto) ? '' : $produto['preco'] ?>" required>
         </div>
         
         <div class="form-group">
-            <input type="file" name="imagem" id="imagem" class="form-control" placeholder="Selecione uma Imagem">
-            <?php if($parametro != null && !empty($parametro[0]['imagem'])): ?>
+            <label for="imagem">Imagem do Produto:</label>
+            <input type="file" id="imagem" name="imagem" class="form-control" accept="image/*" <?= empty($produto) ? 'required' : '' ?>>
+            
+            <?php if(!empty($produto) && !empty($produto['imagem'])): ?>
                 <div class="current-image">
                     <p>Imagem atual:</p>
-                    <img src="<?= $parametro[0]['imagem'] ?>" alt="Imagem do produto" style="max-width: 150px;">
-                    <input type="hidden" name="imagem_atual" value="<?= $parametro[0]['imagem'] ?>">
+                    <img src="<?= $produto['imagem'] ?>" alt="Imagem atual" style="max-width: 200px; max-height: 200px;">
+                    <input type="hidden" name="imagem_atual" value="<?= $produto['imagem'] ?>">
                 </div>
             <?php endif; ?>
         </div>
         
-        <?php if($parametro != null): ?>
-            <input type="hidden" name="id" value="<?= $parametro[0]['id'] ?>">
-        <?php endif; ?>
-        
         <div class="form-group text-center">
-            <button type="submit" class="btn btn-primary btn-full">
-                <?= ($parametro != null) ? 'Atualizar' : 'Adicionar' ?>
-            </button>
+            <button type="submit" class="btn btn-primary"><?= empty($produto) ? 'Cadastrar Produto' : 'Atualizar Produto' ?></button>
+            <a href="<?= $baseUrl ?>/produto/listar" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 </div>

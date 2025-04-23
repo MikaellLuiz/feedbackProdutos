@@ -12,12 +12,20 @@ class FeedbackController {
     private $produtoService;
     private $usuarioService;
     private $template;
+    private $baseUrl;
 
     public function __construct() {
         $this->feedbackService = new FeedbackService();
         $this->produtoService = new ProdutoService();
         $this->usuarioService = new UsuarioService();
         $this->template = new FeedbackTemplate();
+        $this->baseUrl = "/feedbackProdutos"; // Base URL para uso no XAMPP
+    }
+
+    // Método auxiliar para redirecionamento
+    private function redirect($path) {
+        header("Location: {$this->baseUrl}{$path}");
+        exit;
     }
 
     /**
@@ -66,14 +74,12 @@ class FeedbackController {
             
             if ($this->feedbackService->usuarioJaAvaliouProduto($produto_id, $usuario_id)) {
                 $_SESSION['erro_avaliacao'] = 'Você já avaliou este produto. Você pode editar sua avaliação existente na sua área do cliente.';
-                header('Location: /produto/detalhes?id=' . $produto_id);
-                exit;
+                $this->redirect('/produto/detalhes?id=' . $produto_id);
             }
             
             $this->feedbackService->inserirFeedback($produto_id, $usuario_id, $nota, $comentario);
             
-            header('Location: /produto/detalhes?id=' . $produto_id);
-            exit;
+            $this->redirect('/produto/detalhes?id=' . $produto_id);
         }
         
         global $produtos, $usuarios, $produtoSelecionado;
@@ -104,21 +110,18 @@ class FeedbackController {
         $feedback = $this->feedbackService->obterFeedbackPorId($id);
         
         if (empty($feedback)) {
-            header('Location: /feedback/listar');
-            exit;
+            $this->redirect('/feedback/listar');
         }
         
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
-            header('Location: /usuario/login');
-            exit;
+            $this->redirect('/usuario/login');
         }
         
         $usuarioId = $_SESSION['usuario_id'];
         $isAdmin = isset($_SESSION['admin']) && $_SESSION['admin'] == 1;
         
         if (!$isAdmin && $feedback[0]['usuario_id'] != $usuarioId) {
-            header('Location: /feedback/listar');
-            exit;
+            $this->redirect('/feedback/listar');
         }
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -128,8 +131,7 @@ class FeedbackController {
             $comentario = $_POST['comentario'] ?? '';
             
             $this->feedbackService->alterarFeedback($id, $produto_id, $usuario_id, $nota, $comentario);
-            header('Location: /feedback/listar');
-            exit;
+            $this->redirect('/feedback/listar');
         }
         
         $produtos = $this->produtoService->listarProdutos();
@@ -158,31 +160,27 @@ class FeedbackController {
         $id = $_GET['id'] ?? 0;
         
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
-            header('Location: /usuario/login');
-            exit;
+            $this->redirect('/usuario/login');
         }
         
         $feedback = $this->feedbackService->obterFeedbackPorId($id);
         
         if (empty($feedback)) {
-            header('Location: /feedback/listar');
-            exit;
+            $this->redirect('/feedback/listar');
         }
         
         $usuarioId = $_SESSION['usuario_id'];
         $isAdmin = isset($_SESSION['admin']) && $_SESSION['admin'] == 1;
         
         if (!$isAdmin && $feedback[0]['usuario_id'] != $usuarioId) {
-            header('Location: /feedback/listar');
-            exit;
+            $this->redirect('/feedback/listar');
         }
         
         if ($id > 0) {
             $this->feedbackService->excluirFeedback($id);
         }
         
-        header('Location: /feedback/listar');
-        exit;
+        $this->redirect('/feedback/listar');
     }
     
     /**

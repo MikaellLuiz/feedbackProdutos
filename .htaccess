@@ -1,6 +1,11 @@
 RewriteEngine On
 
-# Redireciona tudo para index.php, preservando a URL original
+# Definir base para o subdiretório
+RewriteBase /feedbackProdutos/
+
+# Não aplicar regras para arquivos e diretórios reais
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redireciona tudo para index.php, preservando a URL original
 RewriteRule ^(.*)$ index.php [QSA,L]

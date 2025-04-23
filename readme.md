@@ -42,6 +42,7 @@ feedbackProdutos/
 ├── template/               # Classes de template
 ├── create_feedbackProdutos.sql  # Script SQL para criação do banco (estrutura inicial)
 ├── backup_feedbackProdutos.sql  # Script SQL para restauração completa do banco
+├── backup_feedbackProdutos_xampp.sql # Script SQL adaptado para ambiente XAMPP
 ├── index.php               # Ponto de entrada da aplicação
 └── README.md               # Documentação do projeto
 ```
@@ -145,6 +146,51 @@ mysql -u [seu_usuario] -p < backup_feedbackProdutos.sql
    - Faça login com as credenciais do administrador:
      - Email: `admin@casasluiza.com`
      - Senha: `admin123`
+
+## 📦 Instalação no XAMPP
+
+Se você estiver utilizando o XAMPP como ambiente de desenvolvimento, siga estas instruções específicas:
+
+### Passo 1: Copiar os arquivos para o XAMPP
+
+1. Clone ou copie todos os arquivos do projeto para a pasta `htdocs/feedbackProdutos` do seu XAMPP:
+   ```
+   C:\xampp\htdocs\feedbackProdutos\
+   ```
+
+### Passo 2: Configurar o banco de dados no XAMPP
+
+1. Inicie o XAMPP Control Panel e ative os serviços Apache e MySQL
+2. Abra o phpMyAdmin no navegador: http://localhost/phpmyadmin
+3. Crie um novo banco de dados chamado `feedback_produtos` (Collation: utf8mb4_general_ci)
+4. Selecione o banco de dados criado e clique na aba "SQL"
+5. Copie e cole o conteúdo do arquivo `backup_feedbackProdutos_xampp.sql` e execute-o
+
+### Passo 3: Configurar o arquivo .env para XAMPP
+
+1. Crie um arquivo `.env` na raiz do projeto com as seguintes configurações:
+   ```
+   DB_HOST=localhost
+   DB_NAME=feedback_produtos
+   DB_USER=root
+   DB_PASSWORD=
+   ```
+   **Observação**: Ajuste o usuário e senha conforme sua instalação do XAMPP
+
+### Passo 4: Acessar o sistema
+
+1. Acesse o sistema através do navegador:
+   ```
+   http://localhost/feedbackProdutos/
+   ```
+
+### ⚠️ Observações importantes para XAMPP
+
+- O sistema está configurado para funcionar no subdiretório `/feedbackProdutos`. Todos os links já foram adaptados para este caminho.
+- As imagens de produtos serão salvas como `/feedbackProdutos/public/img/produtos/[nome_arquivo]`.
+- Caso tenha um erro 404, verifique se o mod_rewrite está ativado no Apache do XAMPP:
+  - Edite o arquivo `httpd.conf` do XAMPP e descomente a linha `LoadModule rewrite_module modules/mod_rewrite.so`
+  - Reinicie o servidor Apache
 
 ## 🔐 Funcionalidades Disponíveis
 

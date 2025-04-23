@@ -10,11 +10,19 @@ class UsuarioController {
     private $usuarioService;
     private $feedbackService;
     private $template;
+    private $baseUrl;
 
     public function __construct() {
         $this->usuarioService = new UsuarioService();
         $this->feedbackService = new FeedbackService();
         $this->template = new UsuarioTemplate();
+        $this->baseUrl = "/feedbackProdutos"; // Base URL para uso no XAMPP
+    }
+
+    // Método auxiliar para redirecionamento
+    private function redirect($path) {
+        header("Location: {$this->baseUrl}{$path}");
+        exit;
     }
 
     /**
@@ -40,8 +48,7 @@ class UsuarioController {
             $admin = isset($_POST['admin']) ? true : false;
             
             $this->usuarioService->inserirUsuario($nome, $email, $senha, $admin);
-            header('Location: /usuario/listar');
-            exit;
+            $this->redirect('/usuario/listar');
         }
         
         $this->template->layout('/usuario/formulario.php');
@@ -62,8 +69,7 @@ class UsuarioController {
             $admin = isset($_POST['admin']) ? true : false;
             
             $this->usuarioService->alterarUsuario($id, $nome, $email, $senha, $admin);
-            header('Location: /usuario/listar');
-            exit;
+            $this->redirect('/usuario/listar');
         }
         
         $usuario = $this->usuarioService->obterUsuarioPorId($id);
@@ -87,21 +93,18 @@ class UsuarioController {
             
             if (!empty($usuario) && isset($usuario[0]['admin']) && $usuario[0]['admin']) {
                 $_SESSION['erro_exclusao'] = 'Não é permitido excluir usuários administradores.';
-                header('Location: /usuario/listar');
-                exit;
+                $this->redirect('/usuario/listar');
             }
             
             $this->usuarioService->excluirUsuario($id);
             
             if (isset($_SESSION['usuario_id']) && $_SESSION['usuario_id'] == $id) {
                 session_destroy();
-                header('Location: /usuario/login');
-                exit;
+                $this->redirect('/usuario/login');
             }
         }
         
-        header('Location: /usuario/listar');
-        exit;
+        $this->redirect('/usuario/listar');
     }
     
     /**
@@ -139,12 +142,10 @@ class UsuarioController {
             $_SESSION['admin'] = $resultado['admin'];
             $_SESSION['logado'] = true;
             
-            header('Location: /');
-            exit;
+            $this->redirect('/');
         } else {
             $_SESSION['erro_login'] = 'E-mail ou senha inválidos. Tente novamente.';
-            header('Location: /usuario/login');
-            exit;
+            $this->redirect('/usuario/login');
         }
     }
     
@@ -162,13 +163,11 @@ class UsuarioController {
         
         if ($this->usuarioService->emailExiste($email)) {
             $_SESSION['erro_login'] = 'Este e-mail já está cadastrado. Por favor, faça login.';
-            header('Location: /usuario/login');
-            exit;
+            $this->redirect('/usuario/login');
         }
         
         $_SESSION['novo_email'] = $email;
-        header('Location: /usuario/completar_registro');
-        exit;
+        $this->redirect('/usuario/completar_registro');
     }
     
     /**
@@ -182,8 +181,7 @@ class UsuarioController {
         }
         
         if (!isset($_SESSION['novo_email'])) {
-            header('Location: /usuario/login');
-            exit;
+            $this->redirect('/usuario/login');
         }
         
         $email = $_SESSION['novo_email'];
@@ -196,8 +194,7 @@ class UsuarioController {
             unset($_SESSION['novo_email']);
             
             $_SESSION['sucesso_registro'] = 'Cadastro realizado com sucesso! Por favor, faça login.';
-            header('Location: /usuario/login');
-            exit;
+            $this->redirect('/usuario/login');
         }
         
         $this->template->layout('/usuario/completar_registro.php', ['email' => $email]);
@@ -215,8 +212,7 @@ class UsuarioController {
         
         session_destroy();
         
-        header('Location: /');
-        exit;
+        $this->redirect('/');
     }
     
     /**
@@ -230,8 +226,7 @@ class UsuarioController {
         }
         
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
-            header('Location: /usuario/login');
-            exit;
+            $this->redirect('/usuario/login');
         }
         
         $usuarioId = $_SESSION['usuario_id'];
@@ -382,8 +377,7 @@ class UsuarioController {
         }
         
         if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true || !isset($_SESSION['admin']) || $_SESSION['admin'] != 1) {
-            header('Location: /');
-            exit;
+            $this->redirect('/');
         }
         
         $usuarioId = $_SESSION['usuario_id'];

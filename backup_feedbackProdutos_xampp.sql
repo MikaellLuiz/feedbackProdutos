@@ -34,12 +34,12 @@ CREATE TABLE `produtos` (
 
 -- Dados dos produtos
 INSERT INTO `produtos` VALUES 
-(1,'Notebook','Notebook Dell Inspiron 15 I15-I120K-A46P Intel Core i7 16GB RAM SSD 512 GB 15,6',4556.07,'/public/img/produtos/produto_680293c48c792.png'),
-(2,'Galaxy A15','Smartphone Samsung Galaxy A15 6,5\" 128GB Azul Escuro 4G 4GB RAM Câm. Tripla 50MP + Selfie 13MP 5000mAh Dual Chip',809.10,'/public/img/produtos/produto_68029367ee175.png'),
-(3,'Jogo De Panelas','Jogo de Panelas Brinox Revestimento Cerâmico de Alumínio Preto 5 Peças Carbon Ceramic Life',569.91,'/public/img/produtos/produto_6802941fd9faf.png'),
-(4,'Sofá','Sofá Retrátil Reclinável 3 Lugares Suede - Phormatta Evolution SMP',1139.99,'/public/img/produtos/produto_680294540cc94.png'),
-(5,'Guarda Roupa','Guarda-Roupa Casal Colosseo 8 Portas 4 Gavetas Canelato/Natura - Panorama Móveis',669.90,'/public/img/produtos/produto_68029481ae1a1.png'),
-(6,'TV','Smart TV 50" 4K UHD LED Samsung 50DU7700 - Wi-Fi Bluetooth Alexa 3 HDMI',2349.06,'/public/img/produtos/produto_680294aa35a7d.png');
+(1,'Notebook','Notebook Dell Inspiron 15 I15-I120K-A46P Intel Core i7 16GB RAM SSD 512 GB 15,6',4556.07,'/feedbackProdutos/public/img/produtos/produto_680293c48c792.png'),
+(2,'Galaxy A15','Smartphone Samsung Galaxy A15 6,5\" 128GB Azul Escuro 4G 4GB RAM Câm. Tripla 50MP + Selfie 13MP 5000mAh Dual Chip',809.10,'/feedbackProdutos/public/img/produtos/produto_68029367ee175.png'),
+(3,'Jogo De Panelas','Jogo de Panelas Brinox Revestimento Cerâmico de Alumínio Preto 5 Peças Carbon Ceramic Life',569.91,'/feedbackProdutos/public/img/produtos/produto_6802941fd9faf.png'),
+(4,'Sofá','Sofá Retrátil Reclinável 3 Lugares Suede - Phormatta Evolution SMP',1139.99,'/feedbackProdutos/public/img/produtos/produto_680294540cc94.png'),
+(5,'Guarda Roupa','Guarda-Roupa Casal Colosseo 8 Portas 4 Gavetas Canelato/Natura - Panorama Móveis',669.90,'/feedbackProdutos/public/img/produtos/produto_68029481ae1a1.png'),
+(6,'TV','Smart TV 50" 4K UHD LED Samsung 50DU7700 - Wi-Fi Bluetooth Alexa 3 HDMI',2349.06,'/feedbackProdutos/public/img/produtos/produto_680294aa35a7d.png');
 
 -- Tabela de Feedbacks
 DROP TABLE IF EXISTS `feedbacks`;
